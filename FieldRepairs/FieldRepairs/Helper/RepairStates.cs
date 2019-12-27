@@ -35,6 +35,7 @@ namespace FieldRepairs.Helper {
         }
 
         public override void CalculateDamage(int armorHits, int componentHits) {
+            //BuildingLocation
             throw new NotImplementedException();
         }
     }
@@ -48,6 +49,10 @@ namespace FieldRepairs.Helper {
         }
 
         public override void CalculateDamage(int armorHits, int componentHits) {
+            // Calculate armor and structure hits first, to see if they destroyed any components
+            //ArmorLocation
+            for (int i = 0; i < armorHits; i++) {
+            }
             throw new NotImplementedException();
         }
     }
@@ -60,6 +65,7 @@ namespace FieldRepairs.Helper {
         }
 
         public override void CalculateDamage(int armorHits, int componentHits) {
+            //BuildingLocation
             throw new NotImplementedException();
         }
     }
@@ -67,10 +73,11 @@ namespace FieldRepairs.Helper {
     public class VehicleRepairState : RepairState {
         public readonly Vehicle Target;
         public VehicleRepairState(PoorlyMaintainedEffect effect, Vehicle targetVehicle) : base(effect) {
-
+            this.Target = targetVehicle;
         }
 
         public override void CalculateDamage(int armorHits, int componentHits) {
+            //VehicleChassisLocations
             throw new NotImplementedException();
         }
     }

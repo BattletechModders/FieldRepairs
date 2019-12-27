@@ -1,13 +1,16 @@
-# PitCrew
-This mod for the [HBS BattleTech](http://battletechgame.com/) game breathes life into the technical crews responsible for keeping your company's BattleMechs in fighting shape. The crew is harder to manage, requires a salary, and can occasionally make mistakes that will set back repairs or damage stored items. They are also mercenaries, and can leave at end of a contract or when someone else makes them a better offer! You'll always have Wang and a handful of his chosen favorites, but that may not help if you have a full mechbay of repairs and customizations!
+# Field Repairs
+This mod for the [HBS BattleTech](http://battletechgame.com/) game attempts to make battle damage tell a story. In the base game, certain units can be marked with a _PoorlyMaintained_ status. This reduces their armor, but has no other effects. This makes little sense from a lore perspective, where armor is often described as something easily salvaged and quickly applied, even in the field. Internal structure, weapons, and other components are much harder to repair in the field or to keep at a high state of repair. It should be more common to find enemies with damaged weapons, empty ammo bins, or decreased movement or accuracy. This mod attempts to implement a lore-centric view by altering the effects of the PoorlyMaintained status.
 
-This mod provides the same functionality as:
+At the start of combat, a _theme_ for the poorly maintained units are determined. A theme determines what type of effects will be applied to the unit. 
 
-* [donZappo's Repair Bays](https://github.com/donZappo/Repair-Bays)
-* [donZappo's Monthly Tech Adjustment](https://github.com/donZappo/MonthlyTechAdjustment).
-* [Morphyum's Mech Maintenance by Cost](https://github.com/Morphyum/MechMaintenanceByCost/)
+* Battle Scarred - the units recently participated in a battle and has yet to be fully repaired. Whole limbs may be done, armor largely destroyed and structure damage, and the units may be on their last breath.
+* Mothballed - the units were unused until recently. While structure and armor is intact, internal components are likely damaged or destroyed from their long storage.
+* Exhaustion - the units have been on a long patrol or been through light skirmishes. Their ammo is depleted and their some armor damage will be present. 
+* Scavenged - the units were pulled from a scrapyard and are heavily damaged. 
 
-You should disable or remove the above mods before activating this mod.
+
+
+A theme is determined for each faction on the battlefield. Your units can have one theme, your allies another, and your opfor yet another. Each unit will have a status icon indicating what theme was applied, and the relevant effects.
 
 ## Feature Overview
 
