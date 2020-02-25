@@ -64,15 +64,19 @@
   <ItemGroup>
     <Compile Include="Helper\RepairsHelper.cs" />
     <Compile Include="Objects\RepairStates.cs" />
-    <Compile Include="ModInit.cs" />
     <Compile Include="Objects\RepairThemes.cs" />
     <Compile Include="Patches\UnitSpawnPointGameLogicPatches.cs" />
     <Compile Include="Patches\AbstractActorPatches.cs" />
     <Compile Include="Patches\CombatPatches.cs" />
     <Compile Include="Patches\PoorlyMaintedEffectPatches.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="FieldRepairs.cs" />
+    <Compile Include="Helper\RepairsHelper.cs" />
+    <Compile Include="Helper\RepairStates.cs" />
+    <Compile Include="ModInit.cs" />
     <Compile Include="ModConfig.cs" />
     <Compile Include="ModState.cs" />
+    <Compile Include="Patches\MaintenancePatches.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
