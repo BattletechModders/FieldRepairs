@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace FieldRepairs {
 
-    public static class State {
+    public static class ModState {
 
         public static void Reset() {
             // Reinitialize state

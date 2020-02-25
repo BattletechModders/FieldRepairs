@@ -7,7 +7,19 @@ namespace FieldRepairs {
 
     }
 
+
     public class ModConfig {
+
+        public class SkirmishOpts {
+            /* A tag to apply to enemy units during skirmish matches. Can be one of the vanilla tags for now:
+             * spawn_poorly_maintained_25
+             * spawn_poorly_maintained_50
+             * spawn_poorly_maintained_75
+            */
+            public string Tag = "spawn_poorly_maintained_50";
+        }
+        public SkirmishOpts Skirmish = new SkirmishOpts();
+
 
         // If true, many logs will be printed
         public bool Debug = false;
