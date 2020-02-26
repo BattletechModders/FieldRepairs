@@ -1,5 +1,6 @@
 ﻿
 using FieldRepairs.State;
+using static FieldRepairs.ModConfig;
 
 namespace FieldRepairs {
 
@@ -12,6 +13,18 @@ namespace FieldRepairs {
 
             CurrentTheme = StateTheme.Patched;
 
+        }
+
+        public static ThemeConfig CurrentThemeConfig() {
+            if (CurrentTheme == StateTheme.Patched) {
+                return Mod.Config.Patched;
+            } else if (CurrentTheme == StateTheme.Exhausted) {
+                return Mod.Config.Exhausted;
+            } else if (CurrentTheme == StateTheme.Mothballed) {
+                return Mod.Config.Mothballed;
+            } else {
+                return Mod.Config.Scavenged;
+            }
         }
     }
 

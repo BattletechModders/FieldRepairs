@@ -1,6 +1,7 @@
 ﻿using BattleTech;
 using System;
 using System.Collections.Generic;
+using static FieldRepairs.ModConfig;
 
 namespace FieldRepairs {
 
@@ -53,37 +54,70 @@ namespace FieldRepairs {
         public List<MechComponent> RightLegComponents = new List<MechComponent>();
         public List<MechComponent> RightTorsoComponents = new List<MechComponent>();
         public List<MechComponent> CenterTorsoComponents = new List<MechComponent>();
+        public List<AmmunitionBox> AmmoBoxes = new List<AmmunitionBox>();
+        public List<MechComponent> HeatSinks = new List<MechComponent>();
     }
 
     public class MechRepairState : RepairState {
         public readonly Mech Target;
         public readonly int ArmorHits;
         public readonly int StructureHits;
-        
-        public readonly int ArmCompHits;
-        
-        public readonly int LegCompHits;
-        
-        public readonly int TorsoCompHits;
-        public readonly int HeadCompHits;
 
-        public readonly int AmmoBoxHits;
-        public readonly int HeatSinkHits;
+        public List<MechComponent> DamageComponents = new List<MechComponent>();        
+
         public readonly int EngineHits;
         public readonly int GyroHits;
         public readonly int PilotSkillHits;
-        public MechRepairState(PoorlyMaintainedEffect effect, Mech targetMech) : base(effect) {
+        public MechRepairState(PoorlyMaintainedEffect effect, Mech targetMech, MechNonEssentialComponents nonEssentials) : base(effect) {
             this.Target = targetMech;
-
-            foreach (MechComponent mc in targetMech.allComponents) {
-
-            }
 
             for (int i = 0; i < stateRolls; i++) {
                 int randIdx = Mod.Random.Next(0, 9);
+                ThemeConfig themeConfig = ModState.CurrentThemeConfig();
+                DamageType damageType = themeConfig.MechTable[randIdx];
+
+                bool isResolved = false;
+                while (!isResolved) {
+                    switch (damageType) {
+                        case DamageType.Skill:
+                            break;
+                        case DamageType.Gyro:
+                            // Only accept 1 gyro hit, then fallback
+                            if (GyroHits == 1) {
+                                
+                            }
+                            break;
+                        case DamageType.Engine:
+                            // Only accept 2 engine hits, then fallback
+                            if (EngineHits == 2) {
+
+                            }
+                            break;
+                        case DamageType.HeatSink:
+                            break;
+                        case DamageType.AmmoBox:
+                            break;
+                        case DamageType.TorsoComponent:
+                            break;
+                        case DamageType.LegComponent:
+                            break;
+                        case DamageType.ArmComponent:
+                            break;
+                        case DamageType.Structure:
+                            StructureHits++;
+                            isResolved = true;
+                            break;
+                        case DamageType.Armor:
+                            ArmorHits++;
+                            isResolved = true;
+                            break;
+                    }
+
+                    isResolved = true;
+                }
+
             }
 
-            // Mechs have: structure, armor, components, weapons, ammo, limbs
         }
     }
 

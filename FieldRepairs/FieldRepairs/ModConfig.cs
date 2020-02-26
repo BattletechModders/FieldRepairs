@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FieldRepairs {
 
@@ -11,7 +12,7 @@ namespace FieldRepairs {
 
     public class ModConfig {
 
-        public class SkirmishOpts {
+        public class SkirmishConfig {
             /* A tag to apply to enemy units during skirmish matches. Can be one of the vanilla tags for now:
              * spawn_poorly_maintained_25
              * spawn_poorly_maintained_50
@@ -19,20 +20,21 @@ namespace FieldRepairs {
             */
             public string Tag = "spawn_poorly_maintained_50";
         }
-        public SkirmishOpts Skirmish = new SkirmishOpts();
+        public SkirmishConfig Skirmish = new SkirmishConfig();
 
-        public class StateOpts {
+        public class StateConfig {
             public int Skew = 1;
             public int NumRollsDefault = 6;
             public int NumRolls25Effect = 5;
             public int NumRolls50Effect = 8;
             public int NumRolls75Effect = 11;
         }
-        public StateOpts State = new StateOpts();
+        public StateConfig State = new StateConfig();
 
-        public class ThemeOpts {
+        public class ThemeConfig {
             public string[] MechWeights;
             public DamageType[] MechTable;
+            public SortedSet<DamageType> MechFallbackTable;
 
             public string[] VehicleWeights;
             public DamageType[] VehicleTable;
@@ -40,22 +42,22 @@ namespace FieldRepairs {
             public string[] TurretWeights;
             public DamageType[] TurretTable;
         }
-        public ThemeOpts Patched = new ThemeOpts {
+        public ThemeConfig Patched = new ThemeConfig {
             MechWeights = new string[] { "Structure", "Structure", "Structure", "ArmComponent", "ArmComponent", "LegComponent", "LegComponent", "TorsoComponent", "AmmoBox", "Skill" },
             VehicleWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
             TurretWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
         };
-        public ThemeOpts Exhausted = new ThemeOpts {
+        public ThemeConfig Exhausted = new ThemeConfig {
             MechWeights = new string[] { "Armor", "Armor", "Armor", "Structure", "AmmoBox", "AmmoBox", "AmmoBox", "HeatSink", "Skill", "Skill" },
             VehicleWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
             TurretWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
         };
-        public ThemeOpts Mothballed = new ThemeOpts {
+        public ThemeConfig Mothballed = new ThemeConfig {
             MechWeights = new string[] { "ArmComponent", "LegComponent", "LegComponent", "TorsoComponent", "TorsoComponent", "HeadComponent", "Engine", "Engine", "Gyro", "Gyro" },
             VehicleWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
             TurretWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
         };
-        public ThemeOpts Scavenged = new ThemeOpts {
+        public ThemeConfig Scavenged = new ThemeConfig {
             MechWeights = new string[] { "Armor", "Structure", "ArmComponent", "LegComponent", "TorsoComponent", "HeadComponent", "AmmoBox", "HeatSink", "Engine", "Gyro" },
             VehicleWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
             TurretWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
@@ -86,15 +88,18 @@ namespace FieldRepairs {
             WeightToDamageType(Scavenged);
         }
 
-        private void WeightToDamageType(ThemeOpts theme) {
+        private void WeightToDamageType(ThemeConfig theme) {
             for (int i = 0; i < 10; i++) {
                 string damageTypeId = theme.MechWeights[i];
                 DamageType damageType = (DamageType)Enum.Parse(typeof(DamageType), damageTypeId);
                 theme.MechTable[i] = damageType;
+                theme.MechFallbackTable.Add(damageType);
 
                 // TODO: Add vehicle weights
                 // TODO: Add turret weights
             }
+            theme.MechFallbackTable = (SortedSet<DamageType>)theme.MechFallbackTable.Reverse();
+
 
         }
 
