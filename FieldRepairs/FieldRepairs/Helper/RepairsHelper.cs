@@ -5,15 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FieldRepairs.Helper {
+namespace FieldRepairs.State {
 
     public class RepairsHelper {
-        public static BuildingRepairState GetRepairState(PoorlyMaintainedEffect effect, Building target) {
+        public static BuildingRepairState CalculateRepairState(PoorlyMaintainedEffect effect, Building target) {
             return new BuildingRepairState(effect, target);
         }
 
         public static MechRepairState CalculateRepairState(PoorlyMaintainedEffect effect, Mech target) {
-            return new MechRepairState(effect, target);
+            MechRepairState mechRepairState = new MechRepairState(effect, target);
+
+
+            return mechRepairState;
         }
 
         public static TurretRepairState CalculateRepairState(PoorlyMaintainedEffect effect, Turret target) {

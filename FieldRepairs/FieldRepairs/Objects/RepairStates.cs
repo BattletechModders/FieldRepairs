@@ -1,29 +1,36 @@
 ﻿using BattleTech;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace FieldRepairs.Helper {
+namespace FieldRepairs {
 
     public abstract class RepairState {
 
-        // Represents armor and structure damage levels
-        public readonly int ArmorDamage;
-        // Represents component damage (ammo, weapons, etc)
-        public readonly int ComponentDamage;
+        public readonly int stateRolls;
 
         public RepairState(PoorlyMaintainedEffect effect) {
             if (effect.EffectData.poorlyMaintainedEffectData != null) {
-                ArmorDamage = (int)Math.Ceiling(effect.EffectData.poorlyMaintainedEffectData.armorMod * 5f);
-                ComponentDamage = (int)Math.Ceiling(effect.EffectData.poorlyMaintainedEffectData.ammoMod * 10f);
-            } else {
-                Mod.Log.Warn($"Passed effect '{effect?.EffectData?.Description?.Name}' with no poorMaint data, won't damage target.");
+                if (effect.EffectData.poorlyMaintainedEffectData.armorMod == 0.25f) {
+                    stateRolls = Mod.Random.Next(Mod.Config.State.NumRolls25Effect - Mod.Config.State.Skew,
+                        Mod.Config.State.NumRolls25Effect + Mod.Config.State.Skew);
+                    Mod.Log.Debug($"25% effect supplied, stateRolls = {stateRolls}");
+                } else if (effect.EffectData.poorlyMaintainedEffectData.armorMod == 0.5f) {
+                    stateRolls = Mod.Random.Next(Mod.Config.State.NumRolls50Effect - Mod.Config.State.Skew,
+                        Mod.Config.State.NumRolls50Effect + Mod.Config.State.Skew);
+                    Mod.Log.Debug($"50% effect supplied, stateRolls = {stateRolls}");
+                } else if (effect.EffectData.poorlyMaintainedEffectData.armorMod == 0.75f) {
+                    stateRolls = Mod.Random.Next(Mod.Config.State.NumRolls75Effect - Mod.Config.State.Skew,
+                        Mod.Config.State.NumRolls75Effect + Mod.Config.State.Skew);
+                    Mod.Log.Debug($"75% effect supplied, stateRolls = {stateRolls}");
+                } else {
+                    stateRolls = Mod.Random.Next(Mod.Config.State.NumRollsDefault - Mod.Config.State.Skew,
+                        Mod.Config.State.NumRollsDefault + Mod.Config.State.Skew);
+                    Mod.Log.Debug($"Unidentified effect supplied, stateRolls = {stateRolls}");
+                }
+                
             }
         }
 
-        public abstract void CalculateDamage(int armorHits, int componentHits);
     }
 
     public class BuildingRepairState : RepairState {
@@ -34,26 +41,49 @@ namespace FieldRepairs.Helper {
             // Buildings only have structure
         }
 
-        public override void CalculateDamage(int armorHits, int componentHits) {
-            //BuildingLocation
-            throw new NotImplementedException();
-        }
+    }
+
+    public class MechNonEssentialComponents {
+        // Only lists non-essential components
+        public List<MechComponent> HeadComponents = new List<MechComponent>();
+        public List<MechComponent> LeftArmComponents = new List<MechComponent>();
+        public List<MechComponent> LeftLegComponents = new List<MechComponent>();
+        public List<MechComponent> LeftTorsoComponents = new List<MechComponent>();
+        public List<MechComponent> RightArmComponents = new List<MechComponent>();
+        public List<MechComponent> RightLegComponents = new List<MechComponent>();
+        public List<MechComponent> RightTorsoComponents = new List<MechComponent>();
+        public List<MechComponent> CenterTorsoComponents = new List<MechComponent>();
     }
 
     public class MechRepairState : RepairState {
         public readonly Mech Target;
+        public readonly int ArmorHits;
+        public readonly int StructureHits;
+        
+        public readonly int ArmCompHits;
+        
+        public readonly int LegCompHits;
+        
+        public readonly int TorsoCompHits;
+        public readonly int HeadCompHits;
+
+        public readonly int AmmoBoxHits;
+        public readonly int HeatSinkHits;
+        public readonly int EngineHits;
+        public readonly int GyroHits;
+        public readonly int PilotSkillHits;
         public MechRepairState(PoorlyMaintainedEffect effect, Mech targetMech) : base(effect) {
             this.Target = targetMech;
 
-            // Mechs have: structure, armor, components, weapons, ammo, limbs
-        }
+            foreach (MechComponent mc in targetMech.allComponents) {
 
-        public override void CalculateDamage(int armorHits, int componentHits) {
-            // Calculate armor and structure hits first, to see if they destroyed any components
-            //ArmorLocation
-            for (int i = 0; i < armorHits; i++) {
             }
-            throw new NotImplementedException();
+
+            for (int i = 0; i < stateRolls; i++) {
+                int randIdx = Mod.Random.Next(0, 9);
+            }
+
+            // Mechs have: structure, armor, components, weapons, ammo, limbs
         }
     }
 
@@ -64,10 +94,6 @@ namespace FieldRepairs.Helper {
             // Turrets have armor, structure, components, weapons, ammo
         }
 
-        public override void CalculateDamage(int armorHits, int componentHits) {
-            //BuildingLocation
-            throw new NotImplementedException();
-        }
     }
 
     public class VehicleRepairState : RepairState {
@@ -76,9 +102,5 @@ namespace FieldRepairs.Helper {
             this.Target = targetVehicle;
         }
 
-        public override void CalculateDamage(int armorHits, int componentHits) {
-            //VehicleChassisLocations
-            throw new NotImplementedException();
-        }
     }
 }

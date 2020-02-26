@@ -1,4 +1,5 @@
 ﻿using BattleTech;
+using FieldRepairs.State;
 using Harmony;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,10 @@ namespace FieldRepairs.Patches {
     public static class CombatGameState_FirstTimeInit {
 
         public static void Postfix(CombatGameState __instance) {
-
+            Array themeValues = Enum.GetValues(typeof(StateTheme));
+            int themeIdx = Mod.Random.Next(0, themeValues.Length - 1);
+            ModState.CurrentTheme = (StateTheme)themeValues.GetValue(themeIdx);
+            Mod.Log.Info($"Set StateTheme to: {ModState.CurrentTheme}");
         }
     }
 

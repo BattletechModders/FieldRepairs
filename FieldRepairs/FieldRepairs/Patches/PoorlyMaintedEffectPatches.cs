@@ -1,4 +1,5 @@
 ﻿using BattleTech;
+using FieldRepairs.State;
 using Harmony;
 
 namespace FieldRepairs.Patches {
@@ -25,6 +26,7 @@ namespace FieldRepairs.Patches {
     public static class PoorlyMaintainedEffect_ApplyEffectsToMech {
         static bool Prefix(PoorlyMaintainedEffect __instance, Mech targetMech) {
             Mod.Log.Trace("PME:AETM - entered.");
+            MechRepairState repairState = RepairsHelper.CalculateRepairState(__instance, targetMech);
 
             return false;
         }
