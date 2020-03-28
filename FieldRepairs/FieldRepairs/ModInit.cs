@@ -11,6 +11,7 @@ namespace FieldRepairs {
 
         public const string HarmonyPackage = "us.frostraptor.FieldRepairs";
         public const string LogName = "field_repairs";
+        public const string LogLabel = "FLDREPAIR";
 
         public static IntraModLogger Log;
         public static string ModDir;
@@ -29,7 +30,7 @@ namespace FieldRepairs {
                 Mod.Config = new ModConfig();
             }
 
-            Log = new IntraModLogger(modDirectory, LogName, Config.Debug, Config.Trace);
+            Log = new IntraModLogger(modDirectory, LogName, LogLabel, Config.Debug, Config.Trace);
 
             Assembly asm = Assembly.GetExecutingAssembly();
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(asm.Location);
