@@ -3,6 +3,7 @@ using FieldRepairs.State;
 using Harmony;
 using us.frostraptor.modUtils;
 
+
 namespace FieldRepairs.Patches {
 
     // Vanilla implementation only comes in _25 = (0.25, 0), _50 = (0.50, 0), _75 = (0.75, 0) implementations - see AbstractActor::CreateSpawnEffectByTag
@@ -31,6 +32,7 @@ namespace FieldRepairs.Patches {
             Mod.Log.Debug($"-- Building critical components list for actor: {CombatantUtils.Label(targetMech)}");
             MechNonEssentialComponents nonEssentials = new MechNonEssentialComponents();
             foreach (MechComponent mc in targetMech.allComponents) {
+
                 if (mc.componentDef.CriticalComponent) {
                     Mod.Log.Trace($"  Skipping critical component: {mc.Description.UIName} in location: {(ChassisLocations)mc.Location}");
                 } else if (mc.componentType == ComponentType.AmmunitionBox) {
@@ -39,6 +41,9 @@ namespace FieldRepairs.Patches {
                 } else if (mc.componentType == ComponentType.HeatSink) {
                     Mod.Log.Debug($"  - Found heatSink {mc.Description.UIName}");
                     nonEssentials.HeatSinks.Add(mc);
+                } else if (mc.componentType == ComponentType.Weapon) {
+                    Mod.Log.Debug($"  - Found weapon {mc.Description.UIName}");
+                    nonEssentials.Weapons.Add(mc);
                 } else {
                     switch ((ChassisLocations)mc.Location) {
                         case ChassisLocations.Head:

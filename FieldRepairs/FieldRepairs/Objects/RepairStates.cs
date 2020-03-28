@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using static FieldRepairs.ModConfig;
 
+
+
 namespace FieldRepairs {
 
     public abstract class RepairState {
@@ -56,6 +58,7 @@ namespace FieldRepairs {
         public List<MechComponent> CenterTorsoComponents = new List<MechComponent>();
         public List<AmmunitionBox> AmmoBoxes = new List<AmmunitionBox>();
         public List<MechComponent> HeatSinks = new List<MechComponent>();
+        public List<Weapon> Weapons = new List<Weapon>();
     }
 
     public class MechRepairState : RepairState {
@@ -63,7 +66,7 @@ namespace FieldRepairs {
         public readonly int ArmorHits;
         public readonly int StructureHits;
 
-        public List<MechComponent> DamageComponents = new List<MechComponent>();        
+        public List<MechComponent> DamagedComponents = new List<MechComponent>();        
 
         public readonly int EngineHits;
         public readonly int GyroHits;
@@ -71,10 +74,12 @@ namespace FieldRepairs {
         public MechRepairState(PoorlyMaintainedEffect effect, Mech targetMech, MechNonEssentialComponents nonEssentials) : base(effect) {
             this.Target = targetMech;
 
+            Mod.Log.Debug($"Making {this.stateRolls} rolls for damage.");
             for (int i = 0; i < stateRolls; i++) {
                 int randIdx = Mod.Random.Next(0, 9);
                 ThemeConfig themeConfig = ModState.CurrentThemeConfig();
                 DamageType damageType = themeConfig.MechTable[randIdx];
+                Mod.Log.Debug($"  {i} is damageType: {damageType}.");
 
                 bool isResolved = false;
                 while (!isResolved) {

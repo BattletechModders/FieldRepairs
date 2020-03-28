@@ -33,7 +33,7 @@ namespace FieldRepairs {
 
         public class ThemeConfig {
             public string[] MechWeights;
-            public DamageType[] MechTable;
+            public DamageType[] MechTable = new DamageType[10];
             public SortedSet<DamageType> MechFallbackTable;
 
             public string[] VehicleWeights;
@@ -82,24 +82,36 @@ namespace FieldRepairs {
         }
 
         public void Init() {
+            Mod.Log.Debug(" == Initializing Configuration");
+            Mod.Log.Debug(" -- Patched.");
             WeightToDamageType(Patched);
+
+            Mod.Log.Debug(" -- Exhausted.");
             WeightToDamageType(Exhausted);
+
+            Mod.Log.Debug(" -- Mothballed.");
             WeightToDamageType(Mothballed);
+
+            Mod.Log.Debug(" -- Scavenged.");
             WeightToDamageType(Scavenged);
+
+            Mod.Log.Debug(" == Configuration Initialized");
         }
 
         private void WeightToDamageType(ThemeConfig theme) {
+
+            SortedSet<DamageType> fallback = new SortedSet<DamageType>();
             for (int i = 0; i < 10; i++) {
                 string damageTypeId = theme.MechWeights[i];
                 DamageType damageType = (DamageType)Enum.Parse(typeof(DamageType), damageTypeId);
                 theme.MechTable[i] = damageType;
-                theme.MechFallbackTable.Add(damageType);
+                fallback.Add(damageType);
 
                 // TODO: Add vehicle weights
                 // TODO: Add turret weights
             }
-            theme.MechFallbackTable = (SortedSet<DamageType>)theme.MechFallbackTable.Reverse();
 
+            theme.MechFallbackTable = new SortedSet<DamageType>(fallback.Reverse());
 
         }
 

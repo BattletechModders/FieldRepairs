@@ -35,6 +35,9 @@ namespace FieldRepairs {
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(asm.Location);
             Log.Info($"Assembly version: {fvi.ProductVersion}");
 
+            // Initialize the mod settings
+            Mod.Config.Init();
+
             Log.Debug($"ModDir is:{modDirectory}");
             Log.Debug($"mod.json settings are:({settingsJSON})");
             Mod.Config.LogConfig();
