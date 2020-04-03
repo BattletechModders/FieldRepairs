@@ -25,17 +25,17 @@
             "TurretWeights" : [ "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" ]
         },
         "Exhausted" : {
-            "MechWeights" : [ "Armor", "Structure", "Structure", "Structure", "Component", "Component", "Weapon", "Weapon", "AmmoBox", "Skill" ],
+            "MechWeights" : [ "Armor", "Armor", "Armor", "Structure", "Weapon", "AmmoBox", "AmmoBox", "HeatSink", "Skill", "Skill" ],
             "VehicleWeights" : [ "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" ],
             "TurretWeights" : [ "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" ]
         },
         "Mothballed" : {
-            "MechWeights" : [ "Armor", "Structure", "Structure", "Structure", "Component", "Component", "Weapon", "Weapon", "AmmoBox", "Skill" ],
+            "MechWeights" : [ "Structure", "Component", "Component", "Weapon", "Weapon", "Weapon", "Engine", "Engine", "Gyro", "Gyro" ],
             "VehicleWeights" : [ "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" ],
             "TurretWeights" : [ "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" ]
         },
         "Scavenged" : {
-            "MechWeights" : [ "Armor", "Structure", "Structure", "Structure", "Component", "Component", "Weapon", "Weapon", "AmmoBox", "Skill" ],
+            "MechWeights" : [ "Armor", "Structure", "Component", "Component", "Weapon", "Weapon", "AmmoBox", "HeatSink", "Engine", "Gyro" ],
             "VehicleWeights" : [ "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" ],
             "TurretWeights" : [ "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" ]
         },
