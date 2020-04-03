@@ -9,8 +9,8 @@ namespace FieldRepairs.Patches {
             Mod.Log.Trace("USPGL:S - entered.");
             if (__instance.Combat.ActiveContract.ContractTypeValue.IsSkirmish) {
                 Mod.Log.Debug($"Contract is skirmish. Existing tags are: {__instance.spawnEffectTags}");
-                if (__instance.Combat.HostilityMatrix.IsLocalPlayerFriendly(___teamDefinitionGuid)) {
-                    Mod.Log.Debug($"Spawned unit belongs to enemy or neutral team, adding flag: {Mod.Config.Skirmish.Tag}");
+                if (!__instance.Combat.HostilityMatrix.IsLocalPlayerFriendly(___teamDefinitionGuid)) {
+                    Mod.Log.Debug($"Unit  belongs to enemy or neutral team, adding flag: {Mod.Config.Skirmish.Tag}");
                     __instance.spawnEffectTags.Add(Mod.Config.Skirmish.Tag);
                 }
             }

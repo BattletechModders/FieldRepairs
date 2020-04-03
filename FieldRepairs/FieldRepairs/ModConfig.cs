@@ -8,7 +8,6 @@ namespace FieldRepairs {
 
     }
 
-
     public class ModConfig {
 
         public class SkirmishConfig {
@@ -42,22 +41,22 @@ namespace FieldRepairs {
             public DamageType[] TurretTable;
         }
         public ThemeConfig Patched = new ThemeConfig {
-            MechWeights = new string[] { "Structure", "Structure", "Structure", "ArmComponent", "ArmComponent", "LegComponent", "LegComponent", "TorsoComponent", "AmmoBox", "Skill" },
+            MechWeights = new string[] { "Armor", "Structure", "Structure", "Structure", "Component", "Component", "Weapon", "Weapon", "AmmoBox", "Skill" },
             VehicleWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
             TurretWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
         };
         public ThemeConfig Exhausted = new ThemeConfig {
-            MechWeights = new string[] { "Armor", "Armor", "Armor", "Structure", "AmmoBox", "AmmoBox", "AmmoBox", "HeatSink", "Skill", "Skill" },
+            MechWeights = new string[] { "Armor", "Armor", "Armor", "Structure", "Weapon", "AmmoBox", "AmmoBox", "HeatSink", "Skill", "Skill" },
             VehicleWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
             TurretWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
         };
         public ThemeConfig Mothballed = new ThemeConfig {
-            MechWeights = new string[] { "ArmComponent", "LegComponent", "LegComponent", "TorsoComponent", "TorsoComponent", "HeadComponent", "Engine", "Engine", "Gyro", "Gyro" },
+            MechWeights = new string[] { "Structure", "Component", "Component", "Weapon", "Weapon", "Weapon", "Engine", "Engine", "Gyro", "Gyro" },
             VehicleWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
             TurretWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
         };
         public ThemeConfig Scavenged = new ThemeConfig {
-            MechWeights = new string[] { "Armor", "Structure", "ArmComponent", "LegComponent", "TorsoComponent", "HeadComponent", "AmmoBox", "HeatSink", "Engine", "Gyro" },
+            MechWeights = new string[] { "Armor", "Structure", "Component", "Component", "Weapon", "Weapon", "AmmoBox", "HeatSink", "Engine", "Gyro" },
             VehicleWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
             TurretWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
         };

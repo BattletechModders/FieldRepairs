@@ -41,7 +41,7 @@
     <Reference Include="CustomComponents">
       <HintPath>E:\steam\SteamApps\common\BATTLETECH\Mods\CustomComponents\CustomComponents.dll</HintPath>
     </Reference>
-    <Reference Include="IRBTModUtils, Version=1.6.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="IRBTModUtils, Version=1.6.3.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>E:\steam\SteamApps\common\BATTLETECH\Mods\IRBTModUtils\IRBTModUtils.dll</HintPath>
     </Reference>
@@ -73,7 +73,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helper\RepairsHelper.cs" />
+    <Compile Include="Helper\LocationHelper.cs" />
     <Compile Include="Objects\RepairStates.cs" />
     <Compile Include="Objects\Enums.cs" />
     <Compile Include="Patches\UnitSpawnPointGameLogicPatches.cs" />

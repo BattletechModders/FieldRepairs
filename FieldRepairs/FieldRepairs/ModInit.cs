@@ -52,6 +52,7 @@ namespace FieldRepairs {
             // Initialize modules
             var harmony = HarmonyInstance.Create(HarmonyPackage);
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+
         }
 
     }

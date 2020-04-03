@@ -1,4 +1,5 @@
 ﻿using BattleTech;
+using FieldRepairs.Helper;
 using Harmony;
 using us.frostraptor.modUtils;
 
@@ -28,55 +29,31 @@ namespace FieldRepairs.Patches {
         static bool Prefix(PoorlyMaintainedEffect __instance, Mech targetMech) {
             Mod.Log.Trace("PME:AETM - entered.");
 
-            Mod.Log.Debug($"-- Building critical components list for actor: {CombatantUtils.Label(targetMech)}");
-            MechNonEssentialComponents nonEssentials = new MechNonEssentialComponents();
-            foreach (MechComponent mc in targetMech.allComponents) {
+            Mod.Log.Debug($" Applying PoorlyMaintainedEffect to unit: {CombatantUtils.Label(targetMech)}");
 
-                if (mc.componentDef.CriticalComponent) {
-                    Mod.Log.Trace($"  Skipping critical component: {mc.Description.UIName} in location: {(ChassisLocations)mc.Location}");
-                } else if (mc.componentType == ComponentType.AmmunitionBox) {
-                    Mod.Log.Debug($"  - Found ammoBox {mc.Description.UIName}");
-                    nonEssentials.AmmoBoxes.Add(mc);
-                } else if (mc.componentType == ComponentType.HeatSink) {
-                    Mod.Log.Debug($"  - Found heatSink {mc.Description.UIName}");
-                    nonEssentials.HeatSinks.Add(mc);
-                } else if (mc.componentType == ComponentType.Weapon) {
-                    Mod.Log.Debug($"  - Found weapon {mc.Description.UIName}");
-                    nonEssentials.Weapons.Add(mc);
-                } else {
-                    switch ((ChassisLocations)mc.Location) {
-                        case ChassisLocations.Head:
-                            nonEssentials.HeadComponents.Add(mc);
-                            break;
-                        case ChassisLocations.LeftArm:
-                            nonEssentials.LeftArmComponents.Add(mc);
-                            break;
-                        case ChassisLocations.LeftLeg:
-                            nonEssentials.LeftLegComponents.Add(mc);
-                            break;
-                        case ChassisLocations.LeftTorso:
-                            nonEssentials.LeftTorsoComponents.Add(mc);
-                            break;
-                        case ChassisLocations.RightArm:
-                            nonEssentials.RightArmComponents.Add(mc);
-                            break;
-                        case ChassisLocations.RightLeg:
-                            nonEssentials.RightLegComponents.Add(mc);
-                            break;
-                        case ChassisLocations.RightTorso:
-                            nonEssentials.RightTorsoComponents.Add(mc);
-                            break;
-                        case ChassisLocations.CenterTorso:
-                            nonEssentials.CenterTorsoComponents.Add(mc);
-                            break;
-                        default:
-                            Mod.Log.Debug($" WARN: Unexpected location: {mc.Location} for mech component. Skipping {mc.Description.UIName}");
-                            break;
-                    }
-                }
+            WeaponHitInfo hitInfo = new WeaponHitInfo(-1, -1, -1, -1, "", "", -1, 
+                null, null, null, null, null, null, null, 
+                new AttackDirection[] { AttackDirection.FromFront }, null, null, null);
+
+            MechRepairState repairState = new MechRepairState(__instance, targetMech);
+            foreach (MechComponent mc in repairState.DamagedComponents)
+            {
+                Mod.Log.Debug($"Damaging component: {mc.UIName}");
+                mc.DamageComponent(hitInfo, ComponentDamageLevel.Destroyed, false);
             }
 
-            MechRepairState mechRepairState = new MechRepairState(__instance, targetMech, nonEssentials);
+            for (int i = 0; i < repairState.ArmorHits; i++)
+            {
+                ArmorLocation location = LocationHelper.GetMechArmorLocation();
+                targetMech.StatCollection.ModifyStat<float>(hitInfo.attackerId, hitInfo.stackItemUID, 
+                    targetMech.GetStringForArmorLocation(location), StatCollection.StatOperation.Float_Subtract, damage, -1, true);
+            }
+
+            for (int i = 0; i < repairState.StructureHits; i++)
+            {
+
+            }
+
 
             return false;
         }

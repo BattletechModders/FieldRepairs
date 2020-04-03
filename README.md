@@ -16,12 +16,10 @@ While each theme has similar effects, the poorly maintained tag also defines a r
 
 | Damage                 | Patched | **Exhausted** | **Mothballed** | **Scavenged** |
 | ---------------------- | ------- | ------------- | -------------- | ------------- |
-| Armor Damage           |         | +++           |                | +             |
+| Armor Damage           | + | +++           |                | +             |
 | Structure Damage       | +++     | +             |                | +             |
-| Arm Component Damage   | ++      |               | +              | +             |
-| Leg Component Damage   | ++      |               | ++             | +             |
-| Torso Component Damage | +       |               | ++             | +             |
-| Head Component Damage  |         |               | +              | +             |
+| Component Damage | +++ | | +++ |++|
+| Weapon Damage | ++ | | +++ |++|
 | Ammo Box Damage        | +       | +++           |                | +             |
 | Heat Sink Damage       |         | +             |                | +             |
 | Engine Damage          |         |               | ++             | +             |

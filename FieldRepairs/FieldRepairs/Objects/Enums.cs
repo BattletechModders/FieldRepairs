@@ -15,10 +15,8 @@ namespace FieldRepairs {
     public enum DamageType {
         Armor,
         Structure,
-        ArmComponent,
-        LegComponent,
-        TorsoComponent,
-        HeadComponent,
+        Component,
+        Weapon,
         AmmoBox,
         HeatSink,
         Engine,

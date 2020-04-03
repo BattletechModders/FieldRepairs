@@ -1,4 +1,7 @@
 ﻿using BattleTech;
+using CustomComponents;
+using MechEngineer.Features.ComponentExplosions;
+using MechEngineer.Features.CriticalEffects;
 using System;
 using System.Collections.Generic;
 using static FieldRepairs.ModConfig;
@@ -33,7 +36,6 @@ namespace FieldRepairs {
                 
             }
         }
-
     }
 
     public class BuildingRepairState : RepairState {
@@ -43,22 +45,17 @@ namespace FieldRepairs {
 
             // Buildings only have structure
         }
-
     }
-
 
     public class MechRepairState : RepairState {
         public readonly Mech Target;
+
         public readonly int ArmorHits;
         public readonly int StructureHits;
+        public readonly int PilotSkillHits;
 
         public List<MechComponent> DamagedComponents = new List<MechComponent>();
-        public MechComponent EngineComponent;
-        public MechComponent Gyro;
 
-        public readonly int EngineHits;
-        public readonly int GyroHits;
-        public readonly int PilotSkillHits;
         public MechRepairState(PoorlyMaintainedEffect effect, Mech targetMech) : base(effect)
         {
             this.Target = targetMech;
@@ -66,45 +63,85 @@ namespace FieldRepairs {
             // See https://github.com/BattletechModders/MechEngineer/issues/181
 
             // Parse the list of components on the target. Determine the max engine hits, engine components, etc
-            AnalyzeComponents(targetMech);
+            ComponentSummary compSummary = AnalyzeComponents(targetMech);
 
+            int engineHits = 0;
+            int gyroHits = 0;
+
+            int killSwitch = 0;
             for (int i = 0; i < stateRolls; i++)
             {
-                int randIdx = Mod.Random.Next(0, 9); // Number of indexes in the themeConfig
-                ThemeConfig themeConfig = ModState.CurrentThemeConfig();
-                DamageType damageType = themeConfig.MechTable[randIdx];
-                Mod.Log.Debug($"  {i} is damageType: {damageType}.");
-
                 bool isResolved = false;
                 while (!isResolved)
                 {
+                    int randIdx = Mod.Random.Next(0, 9); // Number of indexes in the themeConfig
+                    ThemeConfig themeConfig = ModState.CurrentThemeConfig();
+                    DamageType damageType = themeConfig.MechTable[randIdx];
+                    Mod.Log.Debug($"  {i} is damageType: {damageType}.");
+
                     switch (damageType)
                     {
                         case DamageType.Skill:
+                            PilotSkillHits++;
+                            isResolved = true;
                             break;
                         case DamageType.Gyro:
                             // Only accept 1 gyro hit, then fallback
-                            if (GyroHits == 1)
+                            if (gyroHits < compSummary.MaxGyroHits)
                             {
-
+                                MechComponent gyroComp = compSummary.GyroParts.GetRandomElement<MechComponent>();
+                                DamagedComponents.Add(gyroComp);
+                                compSummary.GyroParts.Remove(gyroComp);
+                                gyroHits++;
+                                isResolved = true;
                             }
                             break;
                         case DamageType.Engine:
                             // Only accept 2 engine hits, then fallback
-                            if (EngineHits == 2)
+                            if (engineHits < compSummary.MaxEngineHits)
                             {
-
+                                MechComponent engineComp = compSummary.EngineParts.GetRandomElement<MechComponent>();
+                                DamagedComponents.Add(engineComp);
+                                compSummary.EngineParts.Remove(engineComp);
+                                engineHits++;
+                                isResolved = true;
                             }
                             break;
                         case DamageType.HeatSink:
+                            if (compSummary.HeatSinks.Count > 1)
+                            {
+                                MechComponent heatSink = compSummary.HeatSinks.GetRandomElement<MechComponent>();
+                                DamagedComponents.Add(heatSink);
+                                compSummary.HeatSinks.Remove(heatSink);
+                                isResolved = true;
+                            }
                             break;
                         case DamageType.AmmoBox:
+                            if (compSummary.AmmoBoxes.Count > 1)
+                            {
+                                AmmunitionBox ammoBox = compSummary.AmmoBoxes.GetRandomElement<AmmunitionBox>();
+                                DamagedComponents.Add(ammoBox);
+                                compSummary.AmmoBoxes.Remove(ammoBox);
+                                isResolved = true;
+                            }
                             break;
-                        case DamageType.TorsoComponent:
+                        case DamageType.Component:
+                            if (compSummary.Components.Count > 1)
+                            {
+                                MechComponent component = compSummary.Components.GetRandomElement<MechComponent>();
+                                DamagedComponents.Add(component);
+                                compSummary.Components.Remove(component);
+                                isResolved = true;
+                            }
                             break;
-                        case DamageType.LegComponent:
-                            break;
-                        case DamageType.ArmComponent:
+                        case DamageType.Weapon:
+                            if (compSummary.Weapons.Count > 1)
+                            {
+                                MechComponent weapon = compSummary.Weapons.GetRandomElement<MechComponent>();
+                                DamagedComponents.Add(weapon);
+                                compSummary.Weapons.Remove(weapon);
+                                isResolved = true;
+                            }
                             break;
                         case DamageType.Structure:
                             StructureHits++;
@@ -116,8 +153,14 @@ namespace FieldRepairs {
                             break;
                     }
 
-                    isResolved = true;
                 }
+                killSwitch++;
+
+                if (killSwitch > 100)
+                {
+                    Mod.Log.Info("Too many iterating, stopping and moving forward.");
+                }
+
 
             }
 
@@ -128,52 +171,65 @@ namespace FieldRepairs {
             ComponentSummary compSummary = new ComponentSummary();
             foreach (MechComponent mc in targetMech.allComponents)
             {
+                Mod.Log.Debug($"  Checking component: {mc.Name} / {mc.UIName} / {mc.Description.UIName}");
+
+                if (mc.mechComponentRef.Is<Category>(out Category ccCategory)) { }
+                if (mc.mechComponentRef.Is<CriticalEffects>(out CriticalEffects meCritEffects)) { }
+
                 if (mc.componentDef.CriticalComponent)
                 {
-                    Mod.Log.Trace($"  Skipping critical component: {mc.Description.UIName} in location: {(ChassisLocations)mc.Location}");
+                    Mod.Log.Debug($"  Skipping critical component: {mc.Description.UIName} in location: {(ChassisLocations)mc.Location}");
+                }
+                else if (mc.componentDef.IsCategory("Gyro"))
+                {
+                    // TODO: Make mod option
+                    Mod.Log.Debug($"  - Found gyro: {mc.Description.UIName}");
+                    compSummary.GyroParts.Add(mc);
+                    if (meCritEffects != null && meCritEffects.MaxHits > compSummary.MaxGyroHits)
+                    {
+                        compSummary.MaxGyroHits = meCritEffects.MaxHits;
+                        Mod.Log.Debug($"      gyro has maxhits: {compSummary.MaxGyroHits}");
+                    }
+                }
+                else if (mc.componentDef.IsCategory("EnginePart")) 
+                {
+                    // TODO: Make mod option
+                    Mod.Log.Debug($"  - Found engine: {mc.Description.UIName}");
+                    compSummary.EngineParts.Add(mc);
+                    if (meCritEffects != null && meCritEffects.MaxHits > compSummary.MaxEngineHits)
+                    {
+                        compSummary.MaxEngineHits = meCritEffects.MaxHits;
+                        Mod.Log.Debug($"      engine has maxhits: {compSummary.MaxEngineHits}");
+                    }
                 }
                 else if (mc.componentType == ComponentType.AmmunitionBox)
                 {
-                    Mod.Log.Debug($"  - Found ammoBox {mc.Description.UIName}");
+                    Mod.Log.Debug($"  - Found ammoBox: {mc.Description.UIName}");
                     compSummary.AmmoBoxes.Add((AmmunitionBox)mc);
                 }
                 else if (mc.componentType == ComponentType.HeatSink)
                 {
-                    Mod.Log.Debug($"  - Found heatSink {mc.Description.UIName}");
+                    Mod.Log.Debug($"  - Found heatSink: {mc.Description.UIName}");
                     compSummary.HeatSinks.Add(mc);
+                }
+                else if (mc.componentType == ComponentType.Weapon)
+                {
+                    Mod.Log.Debug($"  - Found weapon: {mc.Description.UIName}");
+                    compSummary.Weapons.Add(mc);
+                    // Check weapons for volatile?
+                    if (meCritEffects != null)
+                    {
+                        Mod.Log.Debug($"      weapon has maxhits: {meCritEffects.MaxHits}");
+                    }
+                    if (mc.componentDef.Is<ComponentExplosion>(out ComponentExplosion compExp))
+                    {
+                        Mod.Log.Debug($"      weapon has component explosion: {compExp.ExplosionDamage} / {compExp.HeatDamage} / {compExp.StabilityDamage}");                        
+                    }
                 }
                 else
                 {
-                    switch ((ChassisLocations)mc.Location)
-                    {
-                        case ChassisLocations.Head:
-                            compSummary.InHead.Add(mc);
-                            break;
-                        case ChassisLocations.LeftArm:
-                            compSummary.InLeftArm.Add(mc);
-                            break;
-                        case ChassisLocations.LeftLeg:
-                            compSummary.InLeftLeg.Add(mc);
-                            break;
-                        case ChassisLocations.LeftTorso:
-                            compSummary.InLeftTorso.Add(mc);
-                            break;
-                        case ChassisLocations.RightArm:
-                            compSummary.InRightArm.Add(mc);
-                            break;
-                        case ChassisLocations.RightLeg:
-                            compSummary.InRightLeg.Add(mc);
-                            break;
-                        case ChassisLocations.RightTorso:
-                            compSummary.InRightTorso.Add(mc);
-                            break;
-                        case ChassisLocations.CenterTorso:
-                            compSummary.InCenterTorso.Add(mc);
-                            break;
-                        default:
-                            Mod.Log.Debug($" WARN: Unexpected location: {mc.Location} for mech component. Skipping {mc.Description.UIName}");
-                            break;
-                    }
+                    Mod.Log.Debug($"  - Found component: {mc.Description.UIName} in location: {mc.Location}");
+                    compSummary.Components.Add(mc);
                 }
             }
 
@@ -183,20 +239,19 @@ namespace FieldRepairs {
         private class ComponentSummary
         {
             // Only lists non-essential components
-            public List<MechComponent> InHead = new List<MechComponent>();
-            public List<MechComponent> InLeftArm = new List<MechComponent>();
-            public List<MechComponent> InLeftLeg = new List<MechComponent>();
-            public List<MechComponent> InLeftTorso = new List<MechComponent>();
-            public List<MechComponent> InRightArm = new List<MechComponent>();
-            public List<MechComponent> InRightLeg = new List<MechComponent>();
-            public List<MechComponent> InRightTorso = new List<MechComponent>();
-            public List<MechComponent> InCenterTorso = new List<MechComponent>();
+            public List<MechComponent> Components = new List<MechComponent>();
 
-            public List<MechComponent> Engines = new List<MechComponent>();
-            public List<MechComponent> Gyros = new List<MechComponent>();
+            public List<MechComponent> EngineParts = new List<MechComponent>();
+            public int MaxEngineHits = 0;
+
+            public List<MechComponent> GyroParts = new List<MechComponent>();
+            public int MaxGyroHits = 0;
 
             public List<AmmunitionBox> AmmoBoxes = new List<AmmunitionBox>();
+
             public List<MechComponent> HeatSinks = new List<MechComponent>();
+
+            public List<MechComponent> Weapons = new List<MechComponent>();
         }
     }
 
