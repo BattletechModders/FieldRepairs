@@ -1,5 +1,4 @@
 ﻿
-using FieldRepairs.State;
 using static FieldRepairs.ModConfig;
 
 namespace FieldRepairs {

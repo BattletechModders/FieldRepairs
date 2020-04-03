@@ -173,16 +173,14 @@ namespace FieldRepairs {
             {
                 Mod.Log.Debug($"  Checking component: {mc.Name} / {mc.UIName} / {mc.Description.UIName}");
 
-                if (mc.mechComponentRef.Is<Category>(out Category ccCategory)) { }
                 if (mc.mechComponentRef.Is<CriticalEffects>(out CriticalEffects meCritEffects)) { }
 
                 if (mc.componentDef.CriticalComponent)
                 {
                     Mod.Log.Debug($"  Skipping critical component: {mc.Description.UIName} in location: {(ChassisLocations)mc.Location}");
                 }
-                else if (mc.componentDef.IsCategory("Gyro"))
+                else if (mc.componentDef.IsCategory(Mod.Config.GyroCCCategory))
                 {
-                    // TODO: Make mod option
                     Mod.Log.Debug($"  - Found gyro: {mc.Description.UIName}");
                     compSummary.GyroParts.Add(mc);
                     if (meCritEffects != null && meCritEffects.MaxHits > compSummary.MaxGyroHits)
@@ -191,9 +189,8 @@ namespace FieldRepairs {
                         Mod.Log.Debug($"      gyro has maxhits: {compSummary.MaxGyroHits}");
                     }
                 }
-                else if (mc.componentDef.IsCategory("EnginePart")) 
+                else if (mc.componentDef.IsCategory(Mod.Config.EnginePartCCCategory)) 
                 {
-                    // TODO: Make mod option
                     Mod.Log.Debug($"  - Found engine: {mc.Description.UIName}");
                     compSummary.EngineParts.Add(mc);
                     if (meCritEffects != null && meCritEffects.MaxHits > compSummary.MaxEngineHits)
@@ -216,7 +213,7 @@ namespace FieldRepairs {
                 {
                     Mod.Log.Debug($"  - Found weapon: {mc.Description.UIName}");
                     compSummary.Weapons.Add(mc);
-                    // Check weapons for volatile?
+                    // Check weapons for volatile? If we don't apply effects, do we care?
                     if (meCritEffects != null)
                     {
                         Mod.Log.Debug($"      weapon has maxhits: {meCritEffects.MaxHits}");

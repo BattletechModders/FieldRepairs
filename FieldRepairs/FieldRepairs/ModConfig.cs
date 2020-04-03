@@ -72,6 +72,17 @@ namespace FieldRepairs {
         // The effect ammoMod will be multiplied by this number, then converted to an int. 0.4 ammoMod * 10 => 4 rolls
         public float AmmoEffectToRollsMulti = 10f;
 
+        public string GyroCCCategory = "Gyro";
+        public string EnginePartCCCategory = "EnginePart";
+
+        public float MinArmorLossPerHit = 0.2f;
+        public float MaxArmorLossPerHit = 0.5f;
+        public float MinStructureLossPerHit = 0.1f;
+        public float MaxStructureLossPerHit = 0.3f;
+
+        public int MinSkillPenaltyPerHit = 1;
+        public int MaxSkillPenaltyPerHit = 3;
+
         public void LogConfig() {
             Mod.Log.Info("=== MOD CONFIG BEGIN ===");
             Mod.Log.Info($"  DEBUG:{this.Debug} Trace:{this.Trace}");
