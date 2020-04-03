@@ -61,19 +61,18 @@ namespace FieldRepairs {
             TurretWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
         };
 
+        public class CCCategories
+        {
+            public string Gyros = "Gyro";
+            public string EngineParts = "EnginePart";
+            public List<string> Blacklisted = new List<string> { "Armor", "Structure", "CASE", "PositiveQuirk", "Cockpit" };
+        }
+        public CCCategories CustomComponentCategories = new CCCategories();
+
         // If true, many logs will be printed
         public bool Debug = false;
         // If true, all logs will be printed
         public bool Trace = false;
-
-        // The effect armorMod will be multiplied this number, then converted to an int. 0.3 armorMod * 20 => 6 rolls
-        public float ArmorEffectToRollsMulti = 20f;
-
-        // The effect ammoMod will be multiplied by this number, then converted to an int. 0.4 ammoMod * 10 => 4 rolls
-        public float AmmoEffectToRollsMulti = 10f;
-
-        public string GyroCCCategory = "Gyro";
-        public string EnginePartCCCategory = "EnginePart";
 
         public float MinArmorLossPerHit = 0.2f;
         public float MaxArmorLossPerHit = 0.5f;

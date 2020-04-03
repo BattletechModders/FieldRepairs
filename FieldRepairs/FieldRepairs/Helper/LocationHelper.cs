@@ -34,7 +34,7 @@ namespace FieldRepairs.Helper {
             else if (locationIdx <= 86) location = ArmorLocation.LeftLeg;
             else if (locationIdx <= 99) location = ArmorLocation.RightLeg;
 
-            Mod.Log.Debug($" - Returning locaiton: {location}");
+            Mod.Log.Trace($" - Returning random location: {location}");
             return location;
         }
 
@@ -53,7 +53,7 @@ namespace FieldRepairs.Helper {
             else if (locationIdx <= 86) location = ChassisLocations.LeftLeg;
             else if (locationIdx <= 99) location = ChassisLocations.RightLeg;
 
-            Mod.Log.Debug($" - Returning locaiton: {location}");
+            Mod.Log.Trace($" - Returning random location: {location}");
             return location;
         }
 

@@ -1,6 +1,7 @@
 ﻿using BattleTech;
 using FieldRepairs.Helper;
 using Harmony;
+using System;
 using System.Text;
 using us.frostraptor.modUtils;
 
@@ -43,6 +44,7 @@ namespace FieldRepairs.Patches {
             {
                 Mod.Log.Debug($"Damaging component: {mc.UIName}");
                 componentDamageSB.Append($" - {mc.UIName}\n");
+
                 mc.DamageComponent(hitInfo, ComponentDamageLevel.Destroyed, false);
             }
 
@@ -56,7 +58,7 @@ namespace FieldRepairs.Patches {
                     (int) (Mod.Config.MinArmorLossPerHit * 100), 
                     (int) (Mod.Config.MaxArmorLossPerHit * 100)
                     ) / 100f;
-                float damage = maxArmor * maxDamageRatio;
+                float damage = (float)Math.Floor(maxArmor * maxDamageRatio);
                 if (targetMech.GetCurrentArmor(location) - damage < 0) 
                 {
                     damage = targetMech.GetCurrentArmor(location);
@@ -82,13 +84,21 @@ namespace FieldRepairs.Patches {
                     (int)(Mod.Config.MinStructureLossPerHit * 100),
                     (int)(Mod.Config.MaxStructureLossPerHit * 100)
                     ) / 100f;
-                float damage = maxStructure * maxDamageRatio;
+                float damage = (float)Math.Floor(maxStructure * maxDamageRatio);
                 if (targetMech.GetCurrentStructure(location) - damage < 1)
                 {
                     // Never allow a hit to completely remove a limb or location
                     damage = targetMech.GetCurrentStructure(location) - 1;
                 }
                 Mod.Log.Debug($"Reducing structure in location {location} by {maxDamageRatio}% for {damage} points");
+
+                if (damage != 0)
+                {
+                    targetMech.StatCollection.ModifyStat<float>(hitInfo.attackerId, hitInfo.stackItemUID,
+                        targetMech.GetStringForStructureLocation(location),
+                        StatCollection.StatOperation.Float_Subtract, damage, -1, true);
+                }
+
                 targetMech.UpdateLocationDamageLevel(location, hitInfo.attackerId, hitInfo.stackItemUID);
 
                 if (location == ChassisLocations.Head) armorOrStructHeadHits++;
@@ -101,7 +111,7 @@ namespace FieldRepairs.Patches {
                 int healthDamage = armorOrStructHeadHits;
                 if (targetMech.pilot.BonusHealth > 0)
                 {
-                    int absorbedDamage = 0;
+                    int absorbedDamage;
                     if (targetMech.pilot.BonusHealth >= healthDamage) 
                     {
                         absorbedDamage = healthDamage;

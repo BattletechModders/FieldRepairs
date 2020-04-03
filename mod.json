@@ -7,8 +7,49 @@
     "Website": "https://github.com/IceRaptor/FieldRepairs",
     "Contact": "",
     "DLL": "FieldRepairs.dll",
-    "DependsOn" : [  ],
+    "DLLEntryPoint": "FieldRepairs.Mod.Init",
+    "DependsOn" : [ "IRBTModUtils" ],
     "Settings": {
-        "Debug" : false,
+        "Debug" : true,
+        "Trace" : false,
+        "StateConfig" : {
+            "Skew" : 1,
+            "NumRollsDefault" : 6,
+            "NumRolls25Effect" : 5,
+            "NumRolls50Effect" : 8,
+            "NumRolls75Effect" : 11
+        },
+        "Patched" : {
+            "MechWeights" : [ "Armor", "Structure", "Structure", "Structure", "Component", "Component", "Weapon", "Weapon", "AmmoBox", "Skill" ],
+            "VehicleWeights" : [ "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" ],
+            "TurretWeights" : [ "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" ]
+        },
+        "Exhausted" : {
+            "MechWeights" : [ "Armor", "Structure", "Structure", "Structure", "Component", "Component", "Weapon", "Weapon", "AmmoBox", "Skill" ],
+            "VehicleWeights" : [ "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" ],
+            "TurretWeights" : [ "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" ]
+        },
+        "Mothballed" : {
+            "MechWeights" : [ "Armor", "Structure", "Structure", "Structure", "Component", "Component", "Weapon", "Weapon", "AmmoBox", "Skill" ],
+            "VehicleWeights" : [ "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" ],
+            "TurretWeights" : [ "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" ]
+        },
+        "Scavenged" : {
+            "MechWeights" : [ "Armor", "Structure", "Structure", "Structure", "Component", "Component", "Weapon", "Weapon", "AmmoBox", "Skill" ],
+            "VehicleWeights" : [ "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" ],
+            "TurretWeights" : [ "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" ]
+        },
+        "CustomComponentCategories" : {
+            "Gyros" : "Gyro",
+            "EngineParts" : "EnginePart",
+            "Blacklisted" : [ "Armor", "Structure", "CASE", "PositiveQuirk", "Cockpit" ] 
+        },
+        "MinArmorLossPerHit" : 0.2,
+        "MaxArmorLossPerHit" : 0.5,
+        "MinStructureLossPerHit" : 0.1,
+        "MaxStructureLossPerHit" : 0.3,
+        "MinSkillPenaltyPerHit" : 1,
+        "MaxSkillPenaltyPerHit" : 3
+
     }
 }
