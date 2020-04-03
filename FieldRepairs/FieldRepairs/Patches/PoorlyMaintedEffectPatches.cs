@@ -1,6 +1,7 @@
 ﻿using BattleTech;
 using FieldRepairs.Helper;
 using Harmony;
+using System.Text;
 using us.frostraptor.modUtils;
 
 
@@ -36,10 +37,12 @@ namespace FieldRepairs.Patches {
                 new AttackDirection[] { AttackDirection.FromFront }, null, null, null);
 
             // Apply any structure damage first
+            StringBuilder componentDamageSB = new StringBuilder();
             MechRepairState repairState = new MechRepairState(__instance, targetMech);
             foreach (MechComponent mc in repairState.DamagedComponents)
             {
                 Mod.Log.Debug($"Damaging component: {mc.UIName}");
+                componentDamageSB.Append($" - {mc.UIName}\n");
                 mc.DamageComponent(hitInfo, ComponentDamageLevel.Destroyed, false);
             }
 
@@ -70,8 +73,7 @@ namespace FieldRepairs.Patches {
                 if (location == ArmorLocation.Head) armorOrStructHeadHits++;
             }
 
-            // TODO: Should we limit to locations that have taken armor damage? Probably not as we
-            //   want to represent that armor damage is easily repaired
+            // We don't limit to armor damage locations here so we can represent that armor is easily scavenged
             for (int i = 0; i < repairState.StructureHits; i++)
             {
                 ChassisLocations location = LocationHelper.GetChassisLocations();
@@ -93,6 +95,7 @@ namespace FieldRepairs.Patches {
             }
 
             // Apply any pilot hits
+            StringBuilder pilotDamageSB = new StringBuilder();
             if (armorOrStructHeadHits > 0)
             {
                 int healthDamage = armorOrStructHeadHits;
@@ -113,6 +116,7 @@ namespace FieldRepairs.Patches {
                     Mod.Log.Debug($"Bonus health aborbs: {absorbedDamage} leaving: {healthDamage} healthDamage.");
                     targetMech.pilot.StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID, 
                         "BonusHealth", StatCollection.StatOperation.Int_Subtract, absorbedDamage, -1, true);
+                    pilotDamageSB.Append($" - Bonus Health: {absorbedDamage}\n");
                 }
 
                 if (healthDamage > (targetMech.pilot.Health - 1))
@@ -126,11 +130,13 @@ namespace FieldRepairs.Patches {
                     Mod.Log.Debug($"Adding {healthDamage} to {CombatantUtils.Label(targetMech)}");
                     targetMech.pilot.StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID, 
                         "Injuries", StatCollection.StatOperation.Int_Add, healthDamage, -1, true);
+                    pilotDamageSB.Append($" - Health: {healthDamage}\n");
                 }
 
             }
-            
+
             // Apply any pilot skill reductions
+            StringBuilder pilotSkillSB = new StringBuilder();
             if (repairState.PilotSkillHits > 0)
             {
                 Mod.Log.Debug($"Applying {repairState.PilotSkillHits} hits to pilot skills.");
@@ -141,9 +147,51 @@ namespace FieldRepairs.Patches {
                 }
                 Mod.Log.Debug($"  A total penalty of -{totalMod} will be applied to all pilot skills");
 
+                int pilotingMod = targetMech.pilot.Piloting - totalMod >= 1 ? totalMod : targetMech.pilot.Piloting - 1;
+                int gunneryMod= targetMech.pilot.Gunnery - totalMod >= 1 ? totalMod : targetMech.pilot.Gunnery - 1;
+                int tacticsMod = targetMech.pilot.Tactics - totalMod >= 1 ? totalMod : targetMech.pilot.Tactics - 1;
+                int gutsMod = targetMech.pilot.Guts - totalMod >= 1 ? totalMod : targetMech.pilot.Guts - 1;
+
+                Mod.Log.Debug($"  reducing piloting: -{pilotingMod}  gunnery: -{gunneryMod}  tactics: -{tacticsMod}  guts: -{gutsMod}"); ;
+
+                targetMech.pilot.StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID,
+                    "Piloting", StatCollection.StatOperation.Int_Subtract, pilotingMod, -1, true);
+                pilotSkillSB.Append($" - Piloting: -{pilotingMod}\n");
+
+                targetMech.pilot.StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID,
+                    "Gunnery", StatCollection.StatOperation.Int_Subtract, gunneryMod, -1, true);
+                pilotSkillSB.Append($" - Gunnery: -{gunneryMod}\n");
+
+                targetMech.pilot.StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID,
+                    "Tactics", StatCollection.StatOperation.Int_Subtract, tacticsMod, -1, true);
+                pilotSkillSB.Append($" - Tactics: -{tacticsMod}\n");
+
+                targetMech.pilot.StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID,
+                    "Guts", StatCollection.StatOperation.Int_Subtract, gutsMod, -1, true);
+                pilotSkillSB.Append($" - Guts: -{gutsMod}\n");
 
             }
-            
+
+            StringBuilder descSB = new StringBuilder();
+            if (componentDamageSB.Length > 0)
+            {
+                descSB.Append("<color=#FF0000>COMPONENT DAMAGE</color>\n");
+                descSB.Append(componentDamageSB.ToString());
+            }
+            if (pilotDamageSB.Length > 0)
+            {
+                descSB.Append("<color=#FF0000>PILOT HEALTH DAMAGE</color>\n");
+                descSB.Append(pilotDamageSB.ToString());
+            }
+            if (pilotSkillSB.Length > 0)
+            {
+                descSB.Append("<color=#FF0000>PILOT SKILLS DAMAGE</color>\n");
+                descSB.Append(pilotSkillSB.ToString());
+            }
+
+
+            __instance.EffectData.Description = new BaseDescriptionDef("PoorlyMaintained", ModState.CurrentTheme.Title(),
+                descSB.ToString(), __instance.EffectData.Description.Icon);
 
             return false;
         }
