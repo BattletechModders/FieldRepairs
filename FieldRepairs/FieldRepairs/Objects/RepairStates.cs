@@ -68,9 +68,10 @@ namespace FieldRepairs {
             int engineHits = 0;
             int gyroHits = 0;
 
-            int killSwitch = 0;
+
             for (int i = 0; i < stateRolls; i++)
             {
+                int killSwitch = 0;
                 bool isResolved = false;
                 while (!isResolved)
                 {
@@ -87,7 +88,7 @@ namespace FieldRepairs {
                             break;
                         case DamageType.Gyro:
                             // Only accept 1 gyro hit, then fallback
-                            if (gyroHits < compSummary.MaxGyroHits)
+                            if (compSummary.GyroParts.Count > 0 && gyroHits < compSummary.MaxGyroHits - 1)
                             {
                                 MechComponent gyroComp = compSummary.GyroParts.GetRandomElement<MechComponent>();
                                 DamagedComponents.Add(gyroComp);
@@ -99,7 +100,7 @@ namespace FieldRepairs {
                             break;
                         case DamageType.Engine:
                             // Only accept 2 engine hits, then fallback
-                            if (engineHits < compSummary.MaxEngineHits)
+                            if (compSummary.EngineParts.Count > 0 && engineHits < compSummary.MaxEngineHits - 1)
                             {
                                 MechComponent engineComp = compSummary.EngineParts.GetRandomElement<MechComponent>();
                                 DamagedComponents.Add(engineComp);
@@ -110,7 +111,7 @@ namespace FieldRepairs {
                             }
                             break;
                         case DamageType.HeatSink:
-                            if (compSummary.HeatSinks.Count > 1)
+                            if (compSummary.HeatSinks.Count > 0)
                             {
                                 MechComponent heatSink = compSummary.HeatSinks.GetRandomElement<MechComponent>();
                                 DamagedComponents.Add(heatSink);
@@ -120,7 +121,7 @@ namespace FieldRepairs {
                             }
                             break;
                         case DamageType.AmmoBox:
-                            if (compSummary.AmmoBoxes.Count > 1)
+                            if (compSummary.AmmoBoxes.Count > 0)
                             {
                                 AmmunitionBox ammoBox = compSummary.AmmoBoxes.GetRandomElement<AmmunitionBox>();
                                 DamagedComponents.Add(ammoBox);
@@ -130,7 +131,7 @@ namespace FieldRepairs {
                             }
                             break;
                         case DamageType.Component:
-                            if (compSummary.Components.Count > 1)
+                            if (compSummary.Components.Count > 0)
                             {
                                 MechComponent component = compSummary.Components.GetRandomElement<MechComponent>();
                                 DamagedComponents.Add(component);
@@ -140,7 +141,7 @@ namespace FieldRepairs {
                             }
                             break;
                         case DamageType.Weapon:
-                            if (compSummary.Weapons.Count > 1)
+                            if (compSummary.Weapons.Count > 0)
                             {
                                 MechComponent weapon = compSummary.Weapons.GetRandomElement<MechComponent>();
                                 DamagedComponents.Add(weapon);
@@ -161,15 +162,13 @@ namespace FieldRepairs {
                             break;
                     }
 
+                    killSwitch++;
+
+                    if (killSwitch > 30)
+                    {
+                        Mod.Log.Info("Too many iterating, stopping and moving forward.");
+                    }
                 }
-                killSwitch++;
-
-                if (killSwitch > 100)
-                {
-                    Mod.Log.Info("Too many iterating, stopping and moving forward.");
-                }
-
-
             }
 
         }
@@ -179,7 +178,7 @@ namespace FieldRepairs {
             ComponentSummary compSummary = new ComponentSummary();
             foreach (MechComponent mc in targetMech.allComponents)
             {
-                Mod.Log.Debug($"  Checking component: {mc.Name} / {mc.UIName} / {mc.Description.UIName}");
+                Mod.Log.Debug($"Checking component: {mc.Name} / {mc.UIName} / {mc.Description.UIName}");
 
 
                 bool isBlacklisted = false;
@@ -190,11 +189,11 @@ namespace FieldRepairs {
 
                 if (mc.componentDef.CriticalComponent)
                 {
-                    Mod.Log.Debug($"  Skipping critical component: {mc.Description.UIName} in location: {(ChassisLocations)mc.Location}");
+                    Mod.Log.Debug($"  - Skipping critical component: {mc.Description.UIName} in location: {(ChassisLocations)mc.Location}");
                 }
                 else if (isBlacklisted)
                 {
-                    Mod.Log.Debug($"  Skipping blacklisted component: {mc.Description.UIName}");
+                    Mod.Log.Debug($"  - Skipping blacklisted component: {mc.Description.UIName}");
                 }
                 else if (mc.componentDef.IsCategory(Mod.Config.CustomComponentCategories.Gyros))
                 {

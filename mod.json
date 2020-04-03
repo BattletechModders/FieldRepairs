@@ -12,6 +12,9 @@
     "Settings": {
         "Debug" : true,
         "Trace" : false,
+        "Skirmish" : {
+            "Tag" : "spawn_poorly_maintained_50"
+        },
         "StateConfig" : {
             "Skew" : 1,
             "NumRollsDefault" : 6,
