@@ -76,7 +76,7 @@ namespace FieldRepairs {
                 while (!isResolved)
                 {
                     int randIdx = Mod.Random.Next(0, 9); // Number of indexes in the themeConfig
-                    ThemeConfig themeConfig = ModState.CurrentThemeConfig();
+                    ThemeConfig themeConfig = ModState.CurrentTheme;
                     DamageType damageType = themeConfig.MechTable[randIdx];
 
                     switch (damageType)

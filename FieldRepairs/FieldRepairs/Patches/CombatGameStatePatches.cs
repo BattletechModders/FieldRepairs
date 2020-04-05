@@ -9,9 +9,8 @@ namespace FieldRepairs.Patches {
     public static class CombatGameState_FirstTimeInit {
 
         public static void Postfix(CombatGameState __instance) {
-            Array themeValues = Enum.GetValues(typeof(StateTheme));
-            int themeIdx = Mod.Random.Next(0, themeValues.Length - 1);
-            ModState.CurrentTheme = (StateTheme)themeValues.GetValue(themeIdx);
+            int themeIdx = Mod.Random.Next(0, Mod.Config.Themes.Count - 1);
+            ModState.CurrentTheme = Mod.Config.Themes[themeIdx];
             Mod.Log.Info($"Set StateTheme to: {ModState.CurrentTheme}");
         }
     }

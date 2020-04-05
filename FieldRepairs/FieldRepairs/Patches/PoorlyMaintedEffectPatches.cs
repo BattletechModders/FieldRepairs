@@ -1,6 +1,7 @@
 ﻿using BattleTech;
 using FieldRepairs.Helper;
 using Harmony;
+using Localize;
 using System;
 using System.Text;
 using us.frostraptor.modUtils;
@@ -43,7 +44,8 @@ namespace FieldRepairs.Patches {
             foreach (MechComponent mc in repairState.DamagedComponents)
             {
                 Mod.Log.Debug($"Damaging component: {mc.UIName}");
-                componentDamageSB.Append($" - {mc.UIName}\n");
+                Text localText = new Text(" - {0}\n", new object[] { mc.UIName });
+                componentDamageSB.Append(localText.ToString());
 
                 mc.DamageComponent(hitInfo, ComponentDamageLevel.Destroyed, false);
             }
@@ -126,7 +128,8 @@ namespace FieldRepairs.Patches {
                     Mod.Log.Debug($"Bonus health aborbs: {absorbedDamage} leaving: {healthDamage} healthDamage.");
                     targetMech.pilot.StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID, 
                         "BonusHealth", StatCollection.StatOperation.Int_Subtract, absorbedDamage, -1, true);
-                    pilotDamageSB.Append($" - Bonus Health: {absorbedDamage}\n");
+                    Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_PILOT_BONUS_HEALTH], new object[] { absorbedDamage });
+                    pilotDamageSB.Append(localText.ToString());
                 }
 
                 if (healthDamage > (targetMech.pilot.Health - 1))
@@ -140,7 +143,8 @@ namespace FieldRepairs.Patches {
                     Mod.Log.Debug($"Adding {healthDamage} to {CombatantUtils.Label(targetMech)}");
                     targetMech.pilot.StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID, 
                         "Injuries", StatCollection.StatOperation.Int_Add, healthDamage, -1, true);
-                    pilotDamageSB.Append($" - Health: {healthDamage}\n");
+                    Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_PILOT_HEALTH], new object[] { healthDamage });
+                    pilotDamageSB.Append(localText.ToString());
                 }
 
             }
@@ -166,41 +170,47 @@ namespace FieldRepairs.Patches {
 
                 targetMech.pilot.StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID,
                     "Piloting", StatCollection.StatOperation.Int_Subtract, pilotingMod, -1, true);
-                pilotSkillSB.Append($" - Piloting: -{pilotingMod}\n");
+                Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_SKILL_PILOTING], new object[] { pilotingMod });
+                pilotSkillSB.Append(localText.ToString());
 
                 targetMech.pilot.StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID,
                     "Gunnery", StatCollection.StatOperation.Int_Subtract, gunneryMod, -1, true);
-                pilotSkillSB.Append($" - Gunnery: -{gunneryMod}\n");
+                localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_SKILL_GUNNERY], new object[] { gunneryMod });
+                pilotSkillSB.Append(localText.ToString());
 
                 targetMech.pilot.StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID,
                     "Tactics", StatCollection.StatOperation.Int_Subtract, tacticsMod, -1, true);
-                pilotSkillSB.Append($" - Tactics: -{tacticsMod}\n");
+                localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_SKILL_TACTICS], new object[] { tacticsMod });
+                pilotSkillSB.Append(localText.ToString());
 
                 targetMech.pilot.StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID,
                     "Guts", StatCollection.StatOperation.Int_Subtract, gutsMod, -1, true);
-                pilotSkillSB.Append($" - Guts: -{gutsMod}\n");
-
+                localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_SKILL_GUTS], new object[] { gutsMod });
+                pilotSkillSB.Append(localText.ToString());
             }
 
             StringBuilder descSB = new StringBuilder();
             if (componentDamageSB.Length > 0)
             {
-                descSB.Append("<color=#FF0000>COMPONENT DAMAGE</color>\n");
+                Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_DAMAGE_COMP]);
+                descSB.Append(localText.ToString());
                 descSB.Append(componentDamageSB.ToString());
             }
             if (pilotDamageSB.Length > 0)
             {
-                descSB.Append("<color=#FF0000>PILOT HEALTH DAMAGE</color>\n");
+                Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_DAMAGE_PILOT]);
+                descSB.Append(localText.ToString());
                 descSB.Append(pilotDamageSB.ToString());
             }
             if (pilotSkillSB.Length > 0)
             {
-                descSB.Append("<color=#FF0000>PILOT SKILLS DAMAGE</color>\n");
+                Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_DAMAGE_SKILL]);
+                descSB.Append(localText.ToString());
                 descSB.Append(pilotSkillSB.ToString());
             }
 
 
-            __instance.EffectData.Description = new BaseDescriptionDef("PoorlyMaintained", ModState.CurrentTheme.Title(),
+            __instance.EffectData.Description = new BaseDescriptionDef("PoorlyMaintained", ModState.CurrentTheme.Label,
                 descSB.ToString(), __instance.EffectData.Description.Icon);
 
             return false;
