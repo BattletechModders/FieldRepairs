@@ -18,7 +18,7 @@ namespace FieldRepairs.Helper {
         // 74-86 == 75-87 = left leg -> 13
         // 87-99 == 88-100 = right leg -> 13
 
-        public static ArmorLocation GetMechArmorLocation()
+        public static ArmorLocation GetRandomMechArmorLocation()
         {
             ArmorLocation location = ArmorLocation.CenterTorso;
 
@@ -38,7 +38,7 @@ namespace FieldRepairs.Helper {
             return location;
         }
 
-        public static ChassisLocations GetChassisLocations()
+        public static ChassisLocations GetRandomMechStructureLocation()
         {
             ChassisLocations location = ChassisLocations.CenterTorso;
 
@@ -57,7 +57,26 @@ namespace FieldRepairs.Helper {
             return location;
         }
 
-    }
+        // 0-19  == 1-20 = left side  -> 20
+        // 20-39 == 21-40 = right side -> 20 
+        // 40-83 == 41-85 = front / rear -> 45
+        // 84-99 == 85-100 = turret -> 15
+        public static VehicleChassisLocations GetRandomVehicleLocation()
+        {
+            VehicleChassisLocations location = VehicleChassisLocations.Front;
 
+            bool isFront = Mod.Random.Next(0, 100) < 80;
+            int locationIdx = Mod.Random.Next(0, 100);
+
+            if (locationIdx <= 19) location = VehicleChassisLocations.Left;
+            else if (locationIdx <= 39) location = VehicleChassisLocations.Right;
+            else if (locationIdx <= 83) location = isFront ? VehicleChassisLocations.Front : VehicleChassisLocations.Rear;
+            else if (locationIdx <= 99) location = VehicleChassisLocations.Turret;
+
+            Mod.Log.Trace($" - Returning random location: {location}");
+            return location;
+        }
+
+    }
 
 }

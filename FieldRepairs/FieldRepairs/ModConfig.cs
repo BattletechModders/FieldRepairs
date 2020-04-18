@@ -89,18 +89,23 @@ namespace FieldRepairs {
         }
         public CCCategories CustomComponentCategories = new CCCategories();
 
+
+        public class HitPenalties
+        {
+            public float MinArmorLoss = 0.2f;
+            public float MaxArmorLoss = 0.5f;
+            public float MinStructureLoss = 0.1f;
+            public float MaxStructureLoss = 0.3f;
+
+            public int MinSkillPenalty = 1;
+            public int MaxSkillPenalty = 3;
+        }
+        public HitPenalties PerHitPenalties = new HitPenalties();
+
         // If true, many logs will be printed
         public bool Debug = false;
         // If true, all logs will be printed
         public bool Trace = false;
-
-        public float MinArmorLossPerHit = 0.2f;
-        public float MaxArmorLossPerHit = 0.5f;
-        public float MinStructureLossPerHit = 0.1f;
-        public float MaxStructureLossPerHit = 0.3f;
-
-        public int MinSkillPenaltyPerHit = 1;
-        public int MaxSkillPenaltyPerHit = 3;
 
         // Localizations
         public const string LT_TT_DAMAGE_COMP = "COMP_DAMAGE";
@@ -133,6 +138,33 @@ namespace FieldRepairs {
         public void LogConfig() {
             Mod.Log.Info("=== MOD CONFIG BEGIN ===");
             Mod.Log.Info($"  DEBUG:{this.Debug} Trace:{this.Trace}");
+            
+            Mod.Log.Info(" --- SKIRMISH ---");
+            Mod.Log.Info($"  TAG: {this.Skirmish.Tag}");
+
+            Mod.Log.Info(" --- STATE ---");
+            Mod.Log.Info($"  SKEW: {this.State.Skew} ");
+            Mod.Log.Info($"  NUM_ROLLS => DEFAULT: {this.State.NumRollsDefault}  25: {this.State.NumRolls25Effect}  " +
+                $"50: {this.State.NumRolls50Effect}  75: {this.State.NumRolls75Effect}");
+
+            Mod.Log.Info(" --- CUSTOM COMPONENTS CATEGORIES ---");
+            Mod.Log.Info($"  Gyros: {this.CustomComponentCategories.Gyros}  " +
+                $"EngineParts: {this.CustomComponentCategories.EngineParts}  " +
+                $"Blacklisted: {String.Join(", ", this.CustomComponentCategories.Blacklisted)}");
+
+            Mod.Log.Info(" --- PER HIT PENALTIES ---");
+            Mod.Log.Info($"  ArmorLoss =>  min: {this.PerHitPenalties.MinArmorLoss} max: {this.PerHitPenalties.MaxArmorLoss }");
+            Mod.Log.Info($"  StructureLoss =>  min: {this.PerHitPenalties.MinStructureLoss} max: {this.PerHitPenalties.MaxStructureLoss }");
+            Mod.Log.Info($"  SkillPenalty =>  min: {this.PerHitPenalties.MinSkillPenalty} max: {this.PerHitPenalties.MaxSkillPenalty}");
+
+            Mod.Log.Info(" --- THEMES ---");
+            foreach (ThemeConfig theme in this.Themes)
+            {
+                Mod.Log.Info($"  THEME: {theme.Label}");
+                Mod.Log.Info($"    MECH WEIGHTS: {String.Join(", ", theme.MechWeights)}");
+                Mod.Log.Info($"    VEHICLE WEIGHTS: {String.Join(", ", theme.VehicleWeights)}");
+                Mod.Log.Info($"    TURRET WEIGHTS: {String.Join(", ", theme.TurretWeights)}");
+            }
 
             Mod.Log.Info("=== MOD CONFIG END ===");
         }

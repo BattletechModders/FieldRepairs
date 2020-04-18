@@ -21,9 +21,14 @@ namespace FieldRepairs.Patches {
 
     [HarmonyPatch(typeof(PoorlyMaintainedEffect), "ApplyEffectsToBuilding")]
     public static class PoorlyMaintainedEffect_ApplyEffectsToBuilding {
-        static void Postfix(PoorlyMaintainedEffect __instance, Building targetBuilding) {
+        static bool Prefix(PoorlyMaintainedEffect __instance, Building targetBuilding) {
             Mod.Log.Trace("PME:AETB - entered.");
             //BuildingRepairState repairState = RepairsHelper.GetRepairState(__instance, targetBuilding);
+
+            // Note that OnEffectBegin will invoke *every* ApplyEffects, and expects the ApplyEfect to check that the target isn't null. 
+            if (targetBuilding == null) { return false; }
+
+            return true;
         }
     }
 
@@ -31,6 +36,9 @@ namespace FieldRepairs.Patches {
     public static class PoorlyMaintainedEffect_ApplyEffectsToMech {
         static bool Prefix(PoorlyMaintainedEffect __instance, Mech targetMech) {
             Mod.Log.Trace("PME:AETM - entered.");
+
+            // Note that OnEffectBegin will invoke *every* ApplyEffects, and expects the ApplyEfect to check that the target isn't null. 
+            if (targetMech == null) { return false; }
 
             Mod.Log.Debug($" Applying PoorlyMaintainedEffect to unit: {CombatantUtils.Label(targetMech)}");
 
@@ -54,11 +62,11 @@ namespace FieldRepairs.Patches {
             // Then apply any armor hits
             for (int i = 0; i < repairState.ArmorHits; i++)
             {
-                ArmorLocation location = LocationHelper.GetMechArmorLocation();
+                ArmorLocation location = LocationHelper.GetRandomMechArmorLocation();
                 float maxArmor = targetMech.GetMaxArmor(location);
                 float maxDamageRatio = Mod.Random.Next(
-                    (int) (Mod.Config.MinArmorLossPerHit * 100), 
-                    (int) (Mod.Config.MaxArmorLossPerHit * 100)
+                    (int) (Mod.Config.PerHitPenalties.MinArmorLoss * 100), 
+                    (int) (Mod.Config.PerHitPenalties.MaxArmorLoss * 100)
                     ) / 100f;
                 float damage = (float)Math.Floor(maxArmor * maxDamageRatio);
                 if (targetMech.GetCurrentArmor(location) - damage < 0) 
@@ -80,11 +88,11 @@ namespace FieldRepairs.Patches {
             // We don't limit to armor damage locations here so we can represent that armor is easily scavenged
             for (int i = 0; i < repairState.StructureHits; i++)
             {
-                ChassisLocations location = LocationHelper.GetChassisLocations();
+                ChassisLocations location = LocationHelper.GetRandomMechStructureLocation();
                 float maxStructure = targetMech.GetMaxStructure(location);
                 float maxDamageRatio = Mod.Random.Next(
-                    (int)(Mod.Config.MinStructureLossPerHit * 100),
-                    (int)(Mod.Config.MaxStructureLossPerHit * 100)
+                    (int)(Mod.Config.PerHitPenalties.MinStructureLoss * 100),
+                    (int)(Mod.Config.PerHitPenalties.MaxStructureLoss * 100)
                     ) / 100f;
                 float damage = (float)Math.Floor(maxStructure * maxDamageRatio);
                 if (targetMech.GetCurrentStructure(location) - damage < 1)
@@ -106,89 +114,10 @@ namespace FieldRepairs.Patches {
                 if (location == ChassisLocations.Head) armorOrStructHeadHits++;
             }
 
-            // Apply any pilot hits
-            StringBuilder pilotDamageSB = new StringBuilder();
-            if (armorOrStructHeadHits > 0)
-            {
-                int healthDamage = armorOrStructHeadHits;
-                if (targetMech.pilot.BonusHealth > 0)
-                {
-                    int absorbedDamage;
-                    if (targetMech.pilot.BonusHealth >= healthDamage) 
-                    {
-                        absorbedDamage = healthDamage;
-                        healthDamage = 0;
-                    }
-                    else 
-                    {
-                        absorbedDamage = targetMech.pilot.BonusHealth;
-                        healthDamage = healthDamage - targetMech.pilot.BonusHealth;
-                    }
+            PilotHelper.ApplyPilotHealthDamage(targetMech, hitInfo, armorOrStructHeadHits, out string pilotHealthTooltipText);
+            PilotHelper.ApplyPilotSkillDamage(targetMech, hitInfo, repairState.PilotSkillHits, out string pilotSkillDamageTooltipText);
 
-                    Mod.Log.Debug($"Bonus health aborbs: {absorbedDamage} leaving: {healthDamage} healthDamage.");
-                    targetMech.pilot.StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID, 
-                        "BonusHealth", StatCollection.StatOperation.Int_Subtract, absorbedDamage, -1, true);
-                    Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_PILOT_BONUS_HEALTH], new object[] { absorbedDamage });
-                    pilotDamageSB.Append(localText.ToString());
-                }
-
-                if (healthDamage > (targetMech.pilot.Health - 1))
-                {
-                    Mod.Log.Debug($"Health damage: {healthDamage} would kill pilot, reducing to maxHealth: {targetMech.pilot.Health} - 1");
-                    healthDamage = targetMech.pilot.Health - 1;
-                }
-
-                if (healthDamage > 0)
-                {
-                    Mod.Log.Debug($"Adding {healthDamage} to {CombatantUtils.Label(targetMech)}");
-                    targetMech.pilot.StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID, 
-                        "Injuries", StatCollection.StatOperation.Int_Add, healthDamage, -1, true);
-                    Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_PILOT_HEALTH], new object[] { healthDamage });
-                    pilotDamageSB.Append(localText.ToString());
-                }
-
-            }
-
-            // Apply any pilot skill reductions
-            StringBuilder pilotSkillSB = new StringBuilder();
-            if (repairState.PilotSkillHits > 0)
-            {
-                Mod.Log.Debug($"Applying {repairState.PilotSkillHits} hits to pilot skills.");
-                int totalMod = 0;
-                for (int i = 0; i < repairState.PilotSkillHits; i++)
-                {
-                    totalMod += Mod.Random.Next(Mod.Config.MinSkillPenaltyPerHit, Mod.Config.MaxSkillPenaltyPerHit);
-                }
-                Mod.Log.Debug($"  A total penalty of -{totalMod} will be applied to all pilot skills");
-
-                int pilotingMod = targetMech.pilot.Piloting - totalMod >= 1 ? totalMod : targetMech.pilot.Piloting - 1;
-                int gunneryMod= targetMech.pilot.Gunnery - totalMod >= 1 ? totalMod : targetMech.pilot.Gunnery - 1;
-                int tacticsMod = targetMech.pilot.Tactics - totalMod >= 1 ? totalMod : targetMech.pilot.Tactics - 1;
-                int gutsMod = targetMech.pilot.Guts - totalMod >= 1 ? totalMod : targetMech.pilot.Guts - 1;
-
-                Mod.Log.Debug($"  reducing piloting: -{pilotingMod}  gunnery: -{gunneryMod}  tactics: -{tacticsMod}  guts: -{gutsMod}"); ;
-
-                targetMech.pilot.StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID,
-                    "Piloting", StatCollection.StatOperation.Int_Subtract, pilotingMod, -1, true);
-                Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_SKILL_PILOTING], new object[] { pilotingMod });
-                pilotSkillSB.Append(localText.ToString());
-
-                targetMech.pilot.StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID,
-                    "Gunnery", StatCollection.StatOperation.Int_Subtract, gunneryMod, -1, true);
-                localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_SKILL_GUNNERY], new object[] { gunneryMod });
-                pilotSkillSB.Append(localText.ToString());
-
-                targetMech.pilot.StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID,
-                    "Tactics", StatCollection.StatOperation.Int_Subtract, tacticsMod, -1, true);
-                localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_SKILL_TACTICS], new object[] { tacticsMod });
-                pilotSkillSB.Append(localText.ToString());
-
-                targetMech.pilot.StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID,
-                    "Guts", StatCollection.StatOperation.Int_Subtract, gutsMod, -1, true);
-                localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_SKILL_GUTS], new object[] { gutsMod });
-                pilotSkillSB.Append(localText.ToString());
-            }
-
+            // Build the tooltip
             StringBuilder descSB = new StringBuilder();
             if (componentDamageSB.Length > 0)
             {
@@ -196,19 +125,18 @@ namespace FieldRepairs.Patches {
                 descSB.Append(localText.ToString());
                 descSB.Append(componentDamageSB.ToString());
             }
-            if (pilotDamageSB.Length > 0)
+            if (pilotHealthTooltipText != null)
             {
                 Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_DAMAGE_PILOT]);
                 descSB.Append(localText.ToString());
-                descSB.Append(pilotDamageSB.ToString());
+                descSB.Append(pilotHealthTooltipText);
             }
-            if (pilotSkillSB.Length > 0)
+            if (pilotSkillDamageTooltipText != null)
             {
                 Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_DAMAGE_SKILL]);
                 descSB.Append(localText.ToString());
-                descSB.Append(pilotSkillSB.ToString());
+                descSB.Append(pilotSkillDamageTooltipText.ToString());
             }
-
 
             __instance.EffectData.Description = new BaseDescriptionDef("PoorlyMaintained", ModState.CurrentTheme.Label,
                 descSB.ToString(), __instance.EffectData.Description.Icon);
@@ -219,15 +147,211 @@ namespace FieldRepairs.Patches {
 
     [HarmonyPatch(typeof(PoorlyMaintainedEffect), "ApplyEffectsToTurret")]
     public static class PoorlyMaintainedEffect_ApplyEffectsToTurret {
-        static void Postfix(PoorlyMaintainedEffect __instance, Turret targetTurret) {
+        static bool Prefix(PoorlyMaintainedEffect __instance, Turret targetTurret) {
             Mod.Log.Trace("PME:AETT - entered.");
+
+            // Note that OnEffectBegin will invoke *every* ApplyEffects, and expects the ApplyEfect to check that the target isn't null. 
+            if (targetTurret == null) { return false; }
+
+            Mod.Log.Debug($" Applying PoorlyMaintainedEffect to unit: {CombatantUtils.Label(targetTurret)}");
+
+            WeaponHitInfo hitInfo = new WeaponHitInfo(-1, -1, -1, -1, "", "", -1,
+                null, null, null, null, null, null, null,
+                new AttackDirection[] { AttackDirection.FromFront }, null, null, null);
+
+            // Apply any structure damage first
+            StringBuilder componentDamageSB = new StringBuilder();
+            TurretRepairState repairState = new TurretRepairState(__instance, targetTurret);
+            foreach (MechComponent mc in repairState.DamagedComponents)
+            {
+                Mod.Log.Debug($"Damaging component: {mc.UIName}");
+                Text localText = new Text(" - {0}\n", new object[] { mc.UIName });
+                componentDamageSB.Append(localText.ToString());
+
+                mc.DamageComponent(hitInfo, ComponentDamageLevel.Destroyed, false);
+            }
+
+            // Then apply any armor hits
+            BuildingLocation structureLocation = BuildingLocation.Structure;
+            for (int i = 0; i < repairState.ArmorHits; i++)
+            {
+                float maxArmor = targetTurret.GetMaxArmor(structureLocation);
+                float maxDamageRatio = Mod.Random.Next(
+                    (int)(Mod.Config.PerHitPenalties.MinArmorLoss * 100),
+                    (int)(Mod.Config.PerHitPenalties.MaxArmorLoss * 100)
+                    ) / 100f;
+                float damage = (float)Math.Floor(maxArmor * maxDamageRatio);
+                if (targetTurret.GetCurrentArmor(structureLocation) - damage < 0)
+                {
+                    damage = targetTurret.GetCurrentArmor(structureLocation);
+                }
+                Mod.Log.Debug($"Reducing armor in location {structureLocation} by {maxDamageRatio}% for {damage} points");
+
+                if (damage != 0)
+                {
+                    targetTurret.StatCollection.ModifyStat<float>(hitInfo.attackerId, hitInfo.stackItemUID,
+                        targetTurret.GetStringForArmorLocation(structureLocation),
+                        StatCollection.StatOperation.Float_Subtract, damage, -1, true);
+                }
+
+            }
+
+            // We don't limit to armor damage locations here so we can represent that armor is easily scavenged
+            for (int i = 0; i < repairState.StructureHits; i++)
+            {
+                float maxStructure = targetTurret.GetMaxStructure(structureLocation);
+                float maxDamageRatio = Mod.Random.Next(
+                    (int)(Mod.Config.PerHitPenalties.MinStructureLoss * 100),
+                    (int)(Mod.Config.PerHitPenalties.MaxStructureLoss * 100)
+                    ) / 100f;
+                float damage = (float)Math.Floor(maxStructure * maxDamageRatio);
+                if (targetTurret.GetCurrentStructure(structureLocation) - damage < 1)
+                {
+                    // Never allow a hit to completely remove a limb or location
+                    damage = targetTurret.GetCurrentStructure(structureLocation) - 1;
+                }
+                Mod.Log.Debug($"Reducing structure in location {structureLocation} by {maxDamageRatio}% for {damage} points");
+
+                if (damage != 0)
+                {
+                    targetTurret.StatCollection.ModifyStat<float>(hitInfo.attackerId, hitInfo.stackItemUID,
+                        targetTurret.GetStringForStructureLocation(structureLocation),
+                        StatCollection.StatOperation.Float_Subtract, damage, -1, true);
+                }
+
+                targetTurret.UpdateLocationDamageLevel(structureLocation, hitInfo.attackerId, hitInfo.stackItemUID);
+
+            }
+
+            // Turrets have no head armor, can't take health hits
+            PilotHelper.ApplyPilotSkillDamage(targetTurret, hitInfo, repairState.PilotSkillHits, out string pilotSkillDamageTooltipText);
+
+            // Build the tooltip
+            StringBuilder descSB = new StringBuilder();
+            if (componentDamageSB.Length > 0)
+            {
+                Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_DAMAGE_COMP]);
+                descSB.Append(localText.ToString());
+                descSB.Append(componentDamageSB.ToString());
+            }
+
+            if (pilotSkillDamageTooltipText != null)
+            {
+                Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_DAMAGE_SKILL]);
+                descSB.Append(localText.ToString());
+                descSB.Append(pilotSkillDamageTooltipText.ToString());
+            }
+
+            __instance.EffectData.Description = new BaseDescriptionDef("PoorlyMaintained", ModState.CurrentTheme.Label,
+                descSB.ToString(), __instance.EffectData.Description.Icon);
+
+            return false;
         }
     }
 
     [HarmonyPatch(typeof(PoorlyMaintainedEffect), "ApplyEffectsToVehicle")]
     public static class PoorlyMaintainedEffect_ApplyEffectsToVehicle {
-        static void Postfix(PoorlyMaintainedEffect __instance, Vehicle targetVehicle) {
+        static bool Prefix(PoorlyMaintainedEffect __instance, Vehicle targetVehicle) {
             Mod.Log.Trace("PME:AETV - entered.");
+
+            // Note that OnEffectBegin will invoke *every* ApplyEffects, and expects the ApplyEfect to check that the target isn't null. 
+            if (targetVehicle == null) { return false; }
+
+            Mod.Log.Debug($" Applying PoorlyMaintainedEffect to unit: {CombatantUtils.Label(targetVehicle)}");
+
+            WeaponHitInfo hitInfo = new WeaponHitInfo(-1, -1, -1, -1, "", "", -1,
+                null, null, null, null, null, null, null,
+                new AttackDirection[] { AttackDirection.FromFront }, null, null, null);
+
+            // Apply any structure damage first
+            StringBuilder componentDamageSB = new StringBuilder();
+            VehicleRepairState repairState = new VehicleRepairState(__instance, targetVehicle);
+            foreach (MechComponent mc in repairState.DamagedComponents)
+            {
+                Mod.Log.Debug($"Damaging component: {mc.UIName}");
+                Text localText = new Text(" - {0}\n", new object[] { mc.UIName });
+                componentDamageSB.Append(localText.ToString());
+
+                mc.DamageComponent(hitInfo, ComponentDamageLevel.Destroyed, false);
+            }
+
+            // Then apply any armor hits
+            for (int i = 0; i < repairState.ArmorHits; i++)
+            {
+                VehicleChassisLocations location = LocationHelper.GetRandomVehicleLocation();
+                float maxArmor = targetVehicle.GetMaxArmor(location);
+                float maxDamageRatio = Mod.Random.Next(
+                    (int)(Mod.Config.PerHitPenalties.MinArmorLoss * 100),
+                    (int)(Mod.Config.PerHitPenalties.MaxArmorLoss * 100)
+                    ) / 100f;
+                float damage = (float)Math.Floor(maxArmor * maxDamageRatio);
+                if (targetVehicle.GetCurrentArmor(location) - damage < 0)
+                {
+                    damage = targetVehicle.GetCurrentArmor(location);
+                }
+                Mod.Log.Debug($"Reducing armor in location {location} by {maxDamageRatio}% for {damage} points");
+
+                if (damage != 0)
+                {
+                    targetVehicle.StatCollection.ModifyStat<float>(hitInfo.attackerId, hitInfo.stackItemUID,
+                        targetVehicle.GetStringForArmorLocation(location),
+                        StatCollection.StatOperation.Float_Subtract, damage, -1, true);
+                }
+
+            }
+
+            // We don't limit to armor damage locations here so we can represent that armor is easily scavenged
+            for (int i = 0; i < repairState.StructureHits; i++)
+            {
+                VehicleChassisLocations location = LocationHelper.GetRandomVehicleLocation();
+                float maxStructure = targetVehicle.GetMaxStructure(location);
+                float maxDamageRatio = Mod.Random.Next(
+                    (int)(Mod.Config.PerHitPenalties.MinStructureLoss * 100),
+                    (int)(Mod.Config.PerHitPenalties.MaxStructureLoss * 100)
+                    ) / 100f;
+                float damage = (float)Math.Floor(maxStructure * maxDamageRatio);
+                if (targetVehicle.GetCurrentStructure(location) - damage < 1)
+                {
+                    // Never allow a hit to completely remove a limb or location
+                    damage = targetVehicle.GetCurrentStructure(location) - 1;
+                }
+                Mod.Log.Debug($"Reducing structure in location {location} by {maxDamageRatio}% for {damage} points");
+
+                if (damage != 0)
+                {
+                    targetVehicle.StatCollection.ModifyStat<float>(hitInfo.attackerId, hitInfo.stackItemUID,
+                        targetVehicle.GetStringForStructureLocation(location),
+                        StatCollection.StatOperation.Float_Subtract, damage, -1, true);
+                }
+
+                targetVehicle.UpdateLocationDamageLevel(location, hitInfo.attackerId, hitInfo.stackItemUID);
+
+            }
+
+            // Vehicles have no head armor, can't take health hits
+            PilotHelper.ApplyPilotSkillDamage(targetVehicle, hitInfo, repairState.PilotSkillHits, out string pilotSkillDamageTooltipText);
+
+            // Build the tooltip
+            StringBuilder descSB = new StringBuilder();
+            if (componentDamageSB.Length > 0)
+            {
+                Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_DAMAGE_COMP]);
+                descSB.Append(localText.ToString());
+                descSB.Append(componentDamageSB.ToString());
+            }
+
+            if (pilotSkillDamageTooltipText != null)
+            {
+                Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_DAMAGE_SKILL]);
+                descSB.Append(localText.ToString());
+                descSB.Append(pilotSkillDamageTooltipText.ToString());
+            }
+
+            __instance.EffectData.Description = new BaseDescriptionDef("PoorlyMaintained", ModState.CurrentTheme.Label,
+                descSB.ToString(), __instance.EffectData.Description.Icon);
+
+            return false;
         }
     }
+
 }

@@ -74,6 +74,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helper\LocationHelper.cs" />
+    <Compile Include="Helper\PilotHelper.cs" />
+    <Compile Include="Objects\TurretRepairState.cs" />
+    <Compile Include="Objects\VehicleRepairState.cs" />
+    <Compile Include="Objects\MechRepairState.cs" />
     <Compile Include="Objects\RepairStates.cs" />
     <Compile Include="Objects\Enums.cs" />
     <Compile Include="Patches\UnitSpawnPointGameLogicPatches.cs" />
