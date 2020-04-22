@@ -81,42 +81,9 @@ namespace FieldRepairs {
 
             public string[] TurretWeights;
             public DamageType[] TurretTable = new DamageType[MaxWeightItems];
-
-
         }
 
-        public List<ThemeConfig> Themes = new List<ThemeConfig>
-        {
-            new ThemeConfig
-            {
-                Label = "Patched After Battle - {0}%",
-                MechWeights = new string[] { "Armor", "Structure", "Structure", "Structure", "Component", "Component", "Weapon", "Weapon", "AmmoBox", "Skill" },
-                VehicleWeights = new string[] { "Armor", "Armor", "Armor", "Structure", "Structure", "Structure", "Component", "Weapon", "AmmoBox", "Skill" },
-                TurretWeights = new string[] { "Armor", "Armor", "Armor", "Structure", "Structure", "Structure", "Component", "Weapon", "AmmoBox", "Skill" },
-            },
-            new ThemeConfig
-            {
-                Label = "Battle Fatigue - {0}%",
-                MechWeights = new string[] { "Armor", "Armor", "Armor", "Structure", "Weapon", "AmmoBox", "AmmoBox", "HeatSink", "Skill", "Skill" },
-                VehicleWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Structure", "Weapon", "AmmoBox", "AmmoBox", "Skill", "Skill" },
-                TurretWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Structure", "Weapon", "AmmoBox", "AmmoBox", "Skill", "Skill" },
-            },
-            new ThemeConfig
-            {
-                Label = "Mothballed - {0}%",
-                MechWeights = new string[] { "Structure", "Component", "Component", "Weapon", "Weapon", "Weapon", "Engine", "Engine", "Gyro", "Gyro" },
-                VehicleWeights = new string[] { "Armor", "Armor", "Structure", "Structure", "Component", "Component", "Component", "Weapon", "Weapon", "Weapon" },
-                TurretWeights = new string[] { "Armor", "Armor", "Structure", "Structure", "Component", "Component", "Component", "Weapon", "Weapon", "Weapon" },
-            },
-            new ThemeConfig
-            {
-                Label = "Scavenged - {0}%",
-                MechWeights = new string[] { "Armor", "Structure", "Component", "Component", "Weapon", "Weapon", "AmmoBox", "HeatSink", "Engine", "Gyro" },
-                VehicleWeights = new string[] { "Armor", "Armor", "Structure", "Structure", "Component", "Component", "Weapon", "Weapon", "AmmoBox", "AmmoBox" },
-                TurretWeights = new string[] { "Armor", "Armor", "Structure", "Structure", "Component", "Component", "Weapon", "Weapon", "AmmoBox", "AmmoBox" },
-            },
-
-        };
+        public List<ThemeConfig> Themes = new List<ThemeConfig> { };
 
         public class CCCategories
         {
