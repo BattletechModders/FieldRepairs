@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 namespace FieldRepairs {
 
-    public static class ModStats {
+    public static class ModStats 
+    {
         public const string TestStat = "IRFR_TestStat";
-        public const string CU_Pseudo_Vehicle = "fake_vehicle_chassis"; // Units with this chassisTag are pseudo-mechs representing vehicles
-
     }
 
     public class ModConfig {
 
-        public class SkirmishConfig {
+        public class SkirmishConfig 
+        {
             /* A tag to apply to enemy units during skirmish matches. Can be one of the vanilla tags for now:
              * spawn_poorly_maintained_25
              * spawn_poorly_maintained_50
@@ -21,62 +21,99 @@ namespace FieldRepairs {
         }
         public SkirmishConfig Skirmish = new SkirmishConfig();
 
-        public class StateConfig {
-            public int Skew = 1;
-            public int NumRollsDefault = 6;
-            public int NumRolls25Effect = 5;
-            public int NumRolls50Effect = 8;
-            public int NumRolls75Effect = 11;
-        }
-        public StateConfig State = new StateConfig();
+        public class UnitRollCfg
+        {
+            public int PM25_MinRolls = 1;
+            public int PM25_MaxRolls = 4;
 
-        public class ThemeConfig {
+            public int PM50_MinRolls = 2;
+            public int PM50_MaxRolls = 6;
+
+            public int PM75_MinRolls = 3;
+            public int PM75_MaxRolls = 8;
+        }
+        public class DamageRollCfg
+        {
+            public UnitRollCfg MechRolls = new UnitRollCfg()
+            {
+                PM25_MinRolls = 1,
+                PM25_MaxRolls = 4,
+                PM50_MinRolls = 2,
+                PM50_MaxRolls = 6,
+                PM75_MinRolls = 3,
+                PM75_MaxRolls = 8
+            };
+
+            public UnitRollCfg VehicleRolls = new UnitRollCfg()
+            {
+                PM25_MinRolls = 1,
+                PM25_MaxRolls = 4,
+                PM50_MinRolls = 2,
+                PM50_MaxRolls = 5,
+                PM75_MinRolls = 3,
+                PM75_MaxRolls = 6
+
+            };
+
+            public UnitRollCfg TurretRolls = new UnitRollCfg() {
+                PM25_MinRolls = 1,
+                PM25_MaxRolls = 3,
+                PM50_MinRolls = 1,
+                PM50_MaxRolls = 4,
+                PM75_MinRolls = 2,
+                PM75_MaxRolls = 5
+            };
+        }
+        public DamageRollCfg DamageRollsConfig = new DamageRollCfg();
+
+        public class ThemeConfig 
+        {
             public const int MaxWeightItems = 10;
 
             public string Label;
+            public override string ToString() { return Label; }
 
             public string[] MechWeights;
-            public DamageType[] MechTable = new DamageType[10];
-            public SortedSet<DamageType> MechFallbackTable;
+            public DamageType[] MechTable = new DamageType[MaxWeightItems];
 
             public string[] VehicleWeights;
-            public DamageType[] VehicleTable;
+            public DamageType[] VehicleTable = new DamageType[MaxWeightItems];
 
             public string[] TurretWeights;
-            public DamageType[] TurretTable;
+            public DamageType[] TurretTable = new DamageType[MaxWeightItems];
 
-            public override string ToString() { return Label; }
+
         }
 
         public List<ThemeConfig> Themes = new List<ThemeConfig>
         {
             new ThemeConfig
             {
-                Label = "Patched",
+                Label = "Patched After Battle - {0}%",
                 MechWeights = new string[] { "Armor", "Structure", "Structure", "Structure", "Component", "Component", "Weapon", "Weapon", "AmmoBox", "Skill" },
-                VehicleWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
-                TurretWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
+                VehicleWeights = new string[] { "Armor", "Armor", "Armor", "Structure", "Structure", "Structure", "Component", "Weapon", "AmmoBox", "Skill" },
+                TurretWeights = new string[] { "Armor", "Armor", "Armor", "Structure", "Structure", "Structure", "Component", "Weapon", "AmmoBox", "Skill" },
             },
             new ThemeConfig
             {
-                Label = "Exhausted",
+                Label = "Battle Fatigue - {0}%",
                 MechWeights = new string[] { "Armor", "Armor", "Armor", "Structure", "Weapon", "AmmoBox", "AmmoBox", "HeatSink", "Skill", "Skill" },
-                VehicleWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
-                TurretWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
+                VehicleWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Structure", "Weapon", "AmmoBox", "AmmoBox", "Skill", "Skill" },
+                TurretWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Structure", "Weapon", "AmmoBox", "AmmoBox", "Skill", "Skill" },
             },
             new ThemeConfig
             {
-                Label = "Mothballed",
+                Label = "Mothballed - {0}%",
                 MechWeights = new string[] { "Structure", "Component", "Component", "Weapon", "Weapon", "Weapon", "Engine", "Engine", "Gyro", "Gyro" },
-                VehicleWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
-                TurretWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
+                VehicleWeights = new string[] { "Armor", "Armor", "Structure", "Structure", "Component", "Component", "Component", "Weapon", "Weapon", "Weapon" },
+                TurretWeights = new string[] { "Armor", "Armor", "Structure", "Structure", "Component", "Component", "Component", "Weapon", "Weapon", "Weapon" },
             },
             new ThemeConfig
             {
-                Label = "Scavenged",
+                Label = "Scavenged - {0}%",
                 MechWeights = new string[] { "Armor", "Structure", "Component", "Component", "Weapon", "Weapon", "AmmoBox", "HeatSink", "Engine", "Gyro" },
-                VehicleWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
-                TurretWeights = new string[] { "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor", "Armor" },
+                VehicleWeights = new string[] { "Armor", "Armor", "Structure", "Structure", "Component", "Component", "Weapon", "Weapon", "AmmoBox", "AmmoBox" },
+                TurretWeights = new string[] { "Armor", "Armor", "Structure", "Structure", "Component", "Component", "Weapon", "Weapon", "AmmoBox", "AmmoBox" },
             },
 
         };
@@ -142,10 +179,19 @@ namespace FieldRepairs {
             Mod.Log.Info(" --- SKIRMISH ---");
             Mod.Log.Info($"  TAG: {this.Skirmish.Tag}");
 
-            Mod.Log.Info(" --- STATE ---");
-            Mod.Log.Info($"  SKEW: {this.State.Skew} ");
-            Mod.Log.Info($"  NUM_ROLLS => DEFAULT: {this.State.NumRollsDefault}  25: {this.State.NumRolls25Effect}  " +
-                $"50: {this.State.NumRolls50Effect}  75: {this.State.NumRolls75Effect}");
+            Mod.Log.Info(" --- DAMAGE ROLLS ---");
+            Mod.Log.Info($"  MECH ROLLS: ");
+            Mod.Log.Info($"    poorly_maintained_25 -> min: {this.DamageRollsConfig.MechRolls.PM25_MinRolls} / max: {this.DamageRollsConfig.MechRolls.PM25_MaxRolls}");
+            Mod.Log.Info($"    poorly_maintained_50 -> min: {this.DamageRollsConfig.MechRolls.PM50_MinRolls} / max: {this.DamageRollsConfig.MechRolls.PM50_MaxRolls}");
+            Mod.Log.Info($"    poorly_maintained_75 -> min: {this.DamageRollsConfig.MechRolls.PM75_MinRolls} / max: {this.DamageRollsConfig.MechRolls.PM75_MaxRolls}");
+            Mod.Log.Info($"  VEHICLE ROLLS: ");
+            Mod.Log.Info($"    poorly_maintained_25 -> min: {this.DamageRollsConfig.VehicleRolls.PM25_MinRolls} / max: {this.DamageRollsConfig.VehicleRolls.PM25_MaxRolls}");
+            Mod.Log.Info($"    poorly_maintained_50 -> min: {this.DamageRollsConfig.VehicleRolls.PM50_MinRolls} / max: {this.DamageRollsConfig.VehicleRolls.PM50_MaxRolls}");
+            Mod.Log.Info($"    poorly_maintained_75 -> min: {this.DamageRollsConfig.VehicleRolls.PM75_MinRolls} / max: {this.DamageRollsConfig.VehicleRolls.PM75_MaxRolls}");
+            Mod.Log.Info($"  TURRET ROLLS: ");
+            Mod.Log.Info($"    poorly_maintained_25 -> min: {this.DamageRollsConfig.TurretRolls.PM25_MinRolls} / max: {this.DamageRollsConfig.TurretRolls.PM25_MaxRolls}");
+            Mod.Log.Info($"    poorly_maintained_50 -> min: {this.DamageRollsConfig.TurretRolls.PM50_MinRolls} / max: {this.DamageRollsConfig.TurretRolls.PM50_MaxRolls}");
+            Mod.Log.Info($"    poorly_maintained_75 -> min: {this.DamageRollsConfig.TurretRolls.PM75_MinRolls} / max: {this.DamageRollsConfig.TurretRolls.PM75_MaxRolls}");
 
             Mod.Log.Info(" --- CUSTOM COMPONENTS CATEGORIES ---");
             Mod.Log.Info($"  Gyros: {this.CustomComponentCategories.Gyros}  " +
@@ -164,6 +210,7 @@ namespace FieldRepairs {
                 Mod.Log.Info($"    MECH WEIGHTS: {String.Join(", ", theme.MechWeights)}");
                 Mod.Log.Info($"    VEHICLE WEIGHTS: {String.Join(", ", theme.VehicleWeights)}");
                 Mod.Log.Info($"    TURRET WEIGHTS: {String.Join(", ", theme.TurretWeights)}");
+                Mod.Log.Info($" ");
             }
 
             Mod.Log.Info("=== MOD CONFIG END ===");
@@ -181,20 +228,22 @@ namespace FieldRepairs {
             Mod.Log.Debug(" == Configuration Initialized");
         }
 
+        // Translate the strings in the config to enum types
         private void WeightToDamageType(ThemeConfig theme) {
 
-            SortedSet<DamageType> fallback = new SortedSet<DamageType>();
             for (int i = 0; i < ThemeConfig.MaxWeightItems; i++) {
-                string damageTypeId = theme.MechWeights[i];
-                DamageType damageType = (DamageType)Enum.Parse(typeof(DamageType), damageTypeId);
-                theme.MechTable[i] = damageType;
-                fallback.Add(damageType);
+                string mechDamageTypeId = theme.MechWeights[i];
+                DamageType mechDamageType = (DamageType)Enum.Parse(typeof(DamageType), mechDamageTypeId);
+                theme.MechTable[i] = mechDamageType;
 
-                // TODO: Add vehicle weights
-                // TODO: Add turret weights
+                string vehicleDamageTypeId = theme.VehicleWeights[i];
+                DamageType vehicleDamageType = (DamageType)Enum.Parse(typeof(DamageType), vehicleDamageTypeId);
+                theme.VehicleTable[i] = vehicleDamageType;
+
+                string turretDamageTypeId = theme.TurretWeights[i];
+                DamageType turretDamageType = (DamageType)Enum.Parse(typeof(DamageType), turretDamageTypeId);
+                theme.TurretTable[i] = turretDamageType;
             }
-
-            theme.MechFallbackTable = new SortedSet<DamageType>(fallback.Reverse());
 
         }
 

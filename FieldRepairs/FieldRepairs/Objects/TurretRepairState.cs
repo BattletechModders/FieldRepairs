@@ -15,7 +15,7 @@ namespace FieldRepairs {
 
         public List<MechComponent> DamagedComponents = new List<MechComponent>();
 
-        public TurretRepairState(PoorlyMaintainedEffect effect, Turret targetTurret) : base(effect)
+        public TurretRepairState(PoorlyMaintainedEffect effect, Turret targetTurret) : base(effect, Mod.Config.DamageRollsConfig.TurretRolls)
         {
             this.Target = targetTurret;
 

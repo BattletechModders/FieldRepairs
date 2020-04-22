@@ -40,7 +40,7 @@ namespace FieldRepairs.Patches {
             // Note that OnEffectBegin will invoke *every* ApplyEffects, and expects the ApplyEfect to check that the target isn't null. 
             if (targetMech == null) { return false; }
 
-            Mod.Log.Debug($" Applying PoorlyMaintainedEffect to unit: {CombatantUtils.Label(targetMech)}");
+            Mod.Log.Info($" Applying PoorlyMaintainedEffect to unit: {CombatantUtils.Label(targetMech)}");
 
             WeaponHitInfo hitInfo = new WeaponHitInfo(-1, -1, -1, -1, "", "", -1, 
                 null, null, null, null, null, null, null, 
@@ -51,7 +51,7 @@ namespace FieldRepairs.Patches {
             MechRepairState repairState = new MechRepairState(__instance, targetMech);
             foreach (MechComponent mc in repairState.DamagedComponents)
             {
-                Mod.Log.Debug($"Damaging component: {mc.UIName}");
+                Mod.Log.Info($"Damaging component: {mc.UIName}");
                 Text localText = new Text(" - {0}\n", new object[] { mc.UIName });
                 componentDamageSB.Append(localText.ToString());
 
@@ -73,7 +73,7 @@ namespace FieldRepairs.Patches {
                 {
                     damage = targetMech.GetCurrentArmor(location);
                 }
-                Mod.Log.Debug($"Reducing armor in location {location} by {maxDamageRatio}% for {damage} points");
+                Mod.Log.Info($"Reducing armor in location {location} by {maxDamageRatio}% for {damage} points");
 
                 if (damage != 0) 
                 {
@@ -100,7 +100,7 @@ namespace FieldRepairs.Patches {
                     // Never allow a hit to completely remove a limb or location
                     damage = targetMech.GetCurrentStructure(location) - 1;
                 }
-                Mod.Log.Debug($"Reducing structure in location {location} by {maxDamageRatio}% for {damage} points");
+                Mod.Log.Info($"Reducing structure in location {location} by {maxDamageRatio}% for {damage} points");
 
                 if (damage != 0)
                 {
@@ -138,8 +138,9 @@ namespace FieldRepairs.Patches {
                 descSB.Append(pilotSkillDamageTooltipText.ToString());
             }
 
-            __instance.EffectData.Description = new BaseDescriptionDef("PoorlyMaintained", ModState.CurrentTheme.Label,
-                descSB.ToString(), __instance.EffectData.Description.Icon);
+            Text titleText = new Text(ModState.CurrentTheme.Label, new object[] { repairState.effectRating });
+            __instance.EffectData.Description = new BaseDescriptionDef("PoorlyMaintained", 
+                titleText.ToString(), descSB.ToString(), __instance.EffectData.Description.Icon);
 
             return false;
         }
@@ -153,7 +154,7 @@ namespace FieldRepairs.Patches {
             // Note that OnEffectBegin will invoke *every* ApplyEffects, and expects the ApplyEfect to check that the target isn't null. 
             if (targetTurret == null) { return false; }
 
-            Mod.Log.Debug($" Applying PoorlyMaintainedEffect to unit: {CombatantUtils.Label(targetTurret)}");
+            Mod.Log.Info($" Applying PoorlyMaintainedEffect to unit: {CombatantUtils.Label(targetTurret)}");
 
             WeaponHitInfo hitInfo = new WeaponHitInfo(-1, -1, -1, -1, "", "", -1,
                 null, null, null, null, null, null, null,
@@ -164,7 +165,7 @@ namespace FieldRepairs.Patches {
             TurretRepairState repairState = new TurretRepairState(__instance, targetTurret);
             foreach (MechComponent mc in repairState.DamagedComponents)
             {
-                Mod.Log.Debug($"Damaging component: {mc.UIName}");
+                Mod.Log.Info($"Damaging component: {mc.UIName}");
                 Text localText = new Text(" - {0}\n", new object[] { mc.UIName });
                 componentDamageSB.Append(localText.ToString());
 
@@ -185,7 +186,7 @@ namespace FieldRepairs.Patches {
                 {
                     damage = targetTurret.GetCurrentArmor(structureLocation);
                 }
-                Mod.Log.Debug($"Reducing armor in location {structureLocation} by {maxDamageRatio}% for {damage} points");
+                Mod.Log.Info($"Reducing armor in location {structureLocation} by {maxDamageRatio}% for {damage} points");
 
                 if (damage != 0)
                 {
@@ -210,7 +211,7 @@ namespace FieldRepairs.Patches {
                     // Never allow a hit to completely remove a limb or location
                     damage = targetTurret.GetCurrentStructure(structureLocation) - 1;
                 }
-                Mod.Log.Debug($"Reducing structure in location {structureLocation} by {maxDamageRatio}% for {damage} points");
+                Mod.Log.Info($"Reducing structure in location {structureLocation} by {maxDamageRatio}% for {damage} points");
 
                 if (damage != 0)
                 {
@@ -242,8 +243,9 @@ namespace FieldRepairs.Patches {
                 descSB.Append(pilotSkillDamageTooltipText.ToString());
             }
 
-            __instance.EffectData.Description = new BaseDescriptionDef("PoorlyMaintained", ModState.CurrentTheme.Label,
-                descSB.ToString(), __instance.EffectData.Description.Icon);
+            Text titleText = new Text(ModState.CurrentTheme.Label, new object[] { repairState.effectRating });
+            __instance.EffectData.Description = new BaseDescriptionDef("PoorlyMaintained",
+                titleText.ToString(), descSB.ToString(), __instance.EffectData.Description.Icon);
 
             return false;
         }
@@ -257,7 +259,7 @@ namespace FieldRepairs.Patches {
             // Note that OnEffectBegin will invoke *every* ApplyEffects, and expects the ApplyEfect to check that the target isn't null. 
             if (targetVehicle == null) { return false; }
 
-            Mod.Log.Debug($" Applying PoorlyMaintainedEffect to unit: {CombatantUtils.Label(targetVehicle)}");
+            Mod.Log.Info($" Applying PoorlyMaintainedEffect to unit: {CombatantUtils.Label(targetVehicle)}");
 
             WeaponHitInfo hitInfo = new WeaponHitInfo(-1, -1, -1, -1, "", "", -1,
                 null, null, null, null, null, null, null,
@@ -268,7 +270,7 @@ namespace FieldRepairs.Patches {
             VehicleRepairState repairState = new VehicleRepairState(__instance, targetVehicle);
             foreach (MechComponent mc in repairState.DamagedComponents)
             {
-                Mod.Log.Debug($"Damaging component: {mc.UIName}");
+                Mod.Log.Info($"Damaging component: {mc.UIName}");
                 Text localText = new Text(" - {0}\n", new object[] { mc.UIName });
                 componentDamageSB.Append(localText.ToString());
 
@@ -289,7 +291,7 @@ namespace FieldRepairs.Patches {
                 {
                     damage = targetVehicle.GetCurrentArmor(location);
                 }
-                Mod.Log.Debug($"Reducing armor in location {location} by {maxDamageRatio}% for {damage} points");
+                Mod.Log.Info($"Reducing armor in location {location} by {maxDamageRatio}% for {damage} points");
 
                 if (damage != 0)
                 {
@@ -315,7 +317,7 @@ namespace FieldRepairs.Patches {
                     // Never allow a hit to completely remove a limb or location
                     damage = targetVehicle.GetCurrentStructure(location) - 1;
                 }
-                Mod.Log.Debug($"Reducing structure in location {location} by {maxDamageRatio}% for {damage} points");
+                Mod.Log.Info($"Reducing structure in location {location} by {maxDamageRatio}% for {damage} points");
 
                 if (damage != 0)
                 {
@@ -347,8 +349,9 @@ namespace FieldRepairs.Patches {
                 descSB.Append(pilotSkillDamageTooltipText.ToString());
             }
 
-            __instance.EffectData.Description = new BaseDescriptionDef("PoorlyMaintained", ModState.CurrentTheme.Label,
-                descSB.ToString(), __instance.EffectData.Description.Icon);
+            Text titleText = new Text(ModState.CurrentTheme.Label, new object[] { repairState.effectRating });
+            __instance.EffectData.Description = new BaseDescriptionDef("PoorlyMaintained", 
+                titleText.ToString(), descSB.ToString(), __instance.EffectData.Description.Icon);
 
             return false;
         }

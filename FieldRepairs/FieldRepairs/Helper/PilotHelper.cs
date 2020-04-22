@@ -47,7 +47,7 @@ namespace FieldRepairs.Helper
 
             if (healthDamage > 0)
             {
-                Mod.Log.Debug($"Adding {healthDamage} to {CombatantUtils.Label(target)}");
+                Mod.Log.Info($"Adding {healthDamage} to {CombatantUtils.Label(target)}");
                 target.GetPilot().StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID,
                     "Injuries", StatCollection.StatOperation.Int_Add, healthDamage, -1, true);
                 Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_PILOT_HEALTH], new object[] { healthDamage });
@@ -67,20 +67,20 @@ namespace FieldRepairs.Helper
                 return;
             }
 
-            Mod.Log.Debug($"Applying {skillDamageHits} hits to pilot skills to: {CombatantUtils.Label(target)}");
-            int totalMod = 0;
+            Mod.Log.Info($"Applying {skillDamageHits} hits to pilot skills to: {CombatantUtils.Label(target)}");
+            int combinedPenalty = 0;
             for (int i = 0; i < skillDamageHits; i++)
             {
-                totalMod += Mod.Random.Next(Mod.Config.PerHitPenalties.MinSkillPenalty, Mod.Config.PerHitPenalties.MaxSkillPenalty);
+                combinedPenalty += Mod.Random.Next(Mod.Config.PerHitPenalties.MinSkillPenalty, Mod.Config.PerHitPenalties.MaxSkillPenalty);
             }
-            Mod.Log.Debug($"  A total penalty of -{totalMod} will be applied to all pilot skills");
+            Mod.Log.Info($"  A total penalty of -{combinedPenalty} will be applied to all pilot skills");
 
             Pilot targetPilot = target.GetPilot();
 
-            int pilotingMod = targetPilot.Piloting - totalMod >= 1 ? totalMod : targetPilot.Piloting - 1;
-            int gunneryMod = targetPilot.Gunnery - totalMod >= 1 ? totalMod : targetPilot.Gunnery - 1;
-            int tacticsMod = targetPilot.Tactics - totalMod >= 1 ? totalMod : targetPilot.Tactics - 1;
-            int gutsMod = targetPilot.Guts - totalMod >= 1 ? totalMod : targetPilot.Guts - 1;
+            int pilotingMod = targetPilot.Piloting - combinedPenalty >= 1 ? combinedPenalty : targetPilot.Piloting - 1;
+            int gunneryMod = targetPilot.Gunnery - combinedPenalty >= 1 ? combinedPenalty : targetPilot.Gunnery - 1;
+            int tacticsMod = targetPilot.Tactics - combinedPenalty >= 1 ? combinedPenalty : targetPilot.Tactics - 1;
+            int gutsMod = targetPilot.Guts - combinedPenalty >= 1 ? combinedPenalty : targetPilot.Guts - 1;
 
             Mod.Log.Debug($"  reducing piloting: -{pilotingMod}  gunnery: -{gunneryMod}  tactics: -{tacticsMod}  guts: -{gutsMod}"); ;
 

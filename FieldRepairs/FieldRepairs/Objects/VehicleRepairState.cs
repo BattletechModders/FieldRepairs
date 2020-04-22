@@ -16,7 +16,7 @@ namespace FieldRepairs {
 
         public List<MechComponent> DamagedComponents = new List<MechComponent>();
 
-        public VehicleRepairState(PoorlyMaintainedEffect effect, Vehicle targetVehicle) : base(effect)
+        public VehicleRepairState(PoorlyMaintainedEffect effect, Vehicle targetVehicle) : base(effect, Mod.Config.DamageRollsConfig.VehicleRolls)
         {
             this.Target = targetVehicle;
 
