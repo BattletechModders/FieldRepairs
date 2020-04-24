@@ -11,13 +11,12 @@ namespace FieldRepairs.Patches {
 
     // Vanilla implementation only comes in _25 = (0.25, 0), _50 = (0.50, 0), _75 = (0.75, 0) implementations - see AbstractActor::CreateSpawnEffectByTag
 
-    [HarmonyPatch(typeof(PoorlyMaintainedEffect), "CreatePoorlyMaintainedEffectData")]
-    public static class PoorlyMaintainedEffect_CreatePoorlyMaintainedEffectData {
-        static void Postfix(CombatGameConstants constants, float armorReduction, float ammoReduction, ref EffectData __result) {
-            Mod.Log.Trace("PME:CPMED - entered.");
-            
-        }
-    }
+    //[HarmonyPatch(typeof(PoorlyMaintainedEffect), "CreatePoorlyMaintainedEffectData")]
+    //public static class PoorlyMaintainedEffect_CreatePoorlyMaintainedEffectData {
+    //    static void Postfix(CombatGameConstants constants, float armorReduction, float ammoReduction, ref EffectData __result) {
+    //        Mod.Log.Trace("PME:CPMED - entered.");
+    //    }
+    //}
 
     [HarmonyPatch(typeof(PoorlyMaintainedEffect), "ApplyEffectsToBuilding")]
     public static class PoorlyMaintainedEffect_ApplyEffectsToBuilding {
@@ -41,6 +40,7 @@ namespace FieldRepairs.Patches {
             if (targetMech == null) { return false; }
 
             Mod.Log.Info($" Applying PoorlyMaintainedEffect to unit: {CombatantUtils.Label(targetMech)}");
+            ModState.SuppressShowActorSequences = true;
 
             WeaponHitInfo hitInfo = new WeaponHitInfo(-1, -1, -1, -1, "", "", -1, 
                 null, null, null, null, null, null, null, 
@@ -142,6 +142,7 @@ namespace FieldRepairs.Patches {
             __instance.EffectData.Description = new BaseDescriptionDef("PoorlyMaintained", 
                 titleText.ToString(), descSB.ToString(), __instance.EffectData.Description.Icon);
 
+            ModState.SuppressShowActorSequences = false;
             return false;
         }
     }
@@ -155,6 +156,7 @@ namespace FieldRepairs.Patches {
             if (targetTurret == null) { return false; }
 
             Mod.Log.Info($" Applying PoorlyMaintainedEffect to unit: {CombatantUtils.Label(targetTurret)}");
+            ModState.SuppressShowActorSequences = true;
 
             WeaponHitInfo hitInfo = new WeaponHitInfo(-1, -1, -1, -1, "", "", -1,
                 null, null, null, null, null, null, null,
@@ -247,6 +249,7 @@ namespace FieldRepairs.Patches {
             __instance.EffectData.Description = new BaseDescriptionDef("PoorlyMaintained",
                 titleText.ToString(), descSB.ToString(), __instance.EffectData.Description.Icon);
 
+            ModState.SuppressShowActorSequences = false;
             return false;
         }
     }
@@ -260,6 +263,7 @@ namespace FieldRepairs.Patches {
             if (targetVehicle == null) { return false; }
 
             Mod.Log.Info($" Applying PoorlyMaintainedEffect to unit: {CombatantUtils.Label(targetVehicle)}");
+            ModState.SuppressShowActorSequences = true;
 
             WeaponHitInfo hitInfo = new WeaponHitInfo(-1, -1, -1, -1, "", "", -1,
                 null, null, null, null, null, null, null,
@@ -353,6 +357,7 @@ namespace FieldRepairs.Patches {
             __instance.EffectData.Description = new BaseDescriptionDef("PoorlyMaintained", 
                 titleText.ToString(), descSB.ToString(), __instance.EffectData.Description.Icon);
 
+            ModState.SuppressShowActorSequences = false;
             return false;
         }
     }

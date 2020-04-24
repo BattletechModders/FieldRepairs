@@ -78,6 +78,7 @@
     <Compile Include="Objects\MechRepairState.cs" />
     <Compile Include="Objects\RepairStates.cs" />
     <Compile Include="Objects\Enums.cs" />
+    <Compile Include="Patches\ShowActorInfoSequencePatches.cs" />
     <Compile Include="Patches\UnitSpawnPointGameLogicPatches.cs" />
     <Compile Include="Patches\AbstractActorPatches.cs" />
     <Compile Include="Patches\CombatGameStatePatches.cs" />
