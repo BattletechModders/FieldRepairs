@@ -145,7 +145,7 @@ namespace FieldRepairs {
                 {
                     Mod.Log.Debug($"  - Found engine: {mc.Description.UIName}");
                     compSummary.EngineParts.Add(mc);
-                    if (mc.componentDef.Is<CriticalEffects>(out CriticalEffects meCritEffects) && 
+                    if (mc.componentDef.Is<VehicleCriticalEffects>(out VehicleCriticalEffects meCritEffects) && 
                         meCritEffects.MaxHits > compSummary.MaxEngineHits)
                     {
                         compSummary.MaxEngineHits = meCritEffects.MaxHits;
