@@ -23,7 +23,6 @@ namespace FieldRepairs.Patches
             {
                 Mod.Log.Trace("Suppressing floaties by forcing camera to false.");
                 useCamera = false;
-                return true;
             }
 
             return true;
