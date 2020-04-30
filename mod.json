@@ -1,7 +1,7 @@
 {
     "Name": "FieldRepairs",
     "Enabled": true,
-    "Version": "0.1.6",
+    "Version": "0.1.10",
     "Description": "Replaces armor damage with random criticals and structure damage representing real damage.",
     "Author": "IceRaptor",
     "Website": "https://github.com/IceRaptor/FieldRepairs",
@@ -79,6 +79,8 @@
             "MaxStructureLossPerHit" : 0.3,
             "MinSkillPenaltyPerHit" : 1,
             "MaxSkillPenaltyPerHit" : 3,
+            "MinAmmoLoss" : 0.25,
+            "MaxAmmoLoss" : 0.05
         },
         "LocalizedText" : {
             "COMP_DAMAGE" : "<color=#FF0000>COMPONENT DAMAGE</color>\n",
