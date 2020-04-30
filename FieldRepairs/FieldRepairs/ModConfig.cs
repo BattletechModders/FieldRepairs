@@ -6,6 +6,7 @@ namespace FieldRepairs {
     public static class ModStats 
     {
         public const string TestStat = "IRFR_TestStat";
+        public const string AmmoBoxCurrentAmmo = "CurrentAmmo";
     }
 
     public class ModConfig {
@@ -103,6 +104,9 @@ namespace FieldRepairs {
 
             public int MinSkillPenalty = 1;
             public int MaxSkillPenalty = 3;
+
+            public float MinAmmoLoss = 0.25f;
+            public float MaxAmmoLoss = 0.05f;
         }
         public HitPenalties PerHitPenalties = new HitPenalties();
 

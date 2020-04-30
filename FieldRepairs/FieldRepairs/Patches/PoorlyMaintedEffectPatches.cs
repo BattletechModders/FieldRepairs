@@ -51,11 +51,25 @@ namespace FieldRepairs.Patches {
             MechRepairState repairState = new MechRepairState(__instance, targetMech);
             foreach (MechComponent mc in repairState.DamagedComponents)
             {
-                Mod.Log.Info($"Damaging component: {mc.UIName}");
-                Text localText = new Text(" - {0}\n", new object[] { mc.UIName });
-                componentDamageSB.Append(localText.ToString());
+                if (mc.componentType == ComponentType.AmmunitionBox)
+                {
+                    AmmunitionBox ab = (AmmunitionBox)mc;
+                    float ammoReduction = Mod.Random.Next(
+                        (int)(Mod.Config.PerHitPenalties.MaxAmmoLoss * 100f),
+                        (int)(Mod.Config.PerHitPenalties.MinAmmoLoss * 100f)
+                        ) / 100f;
+                    int newAmmo = (int)Math.Floor(ab.CurrentAmmo * ammoReduction);
+                    Mod.Log.Info($"Reducing ammoBox: {mc.UIName} from {ab.CurrentAmmo} x {ammoReduction} = {newAmmo}");
+                    ab.StatCollection.Set<int>(ModStats.AmmoBoxCurrentAmmo, newAmmo);
+                }
+                else
+                {
+                    Mod.Log.Info($"Damaging component: {mc.UIName}");
+                    Text localText = new Text(" - {0}\n", new object[] { mc.UIName });
+                    componentDamageSB.Append(localText.ToString());
 
-                mc.DamageComponent(hitInfo, ComponentDamageLevel.Destroyed, false);
+                    mc.DamageComponent(hitInfo, ComponentDamageLevel.Destroyed, false);
+                }
             }
 
             int armorOrStructHeadHits = 0;
@@ -167,11 +181,25 @@ namespace FieldRepairs.Patches {
             TurretRepairState repairState = new TurretRepairState(__instance, targetTurret);
             foreach (MechComponent mc in repairState.DamagedComponents)
             {
-                Mod.Log.Info($"Damaging component: {mc.UIName}");
-                Text localText = new Text(" - {0}\n", new object[] { mc.UIName });
-                componentDamageSB.Append(localText.ToString());
+                if (mc.componentType == ComponentType.AmmunitionBox)
+                {
+                    AmmunitionBox ab = (AmmunitionBox)mc;
+                    float ammoReduction = Mod.Random.Next(
+                        (int)(Mod.Config.PerHitPenalties.MaxAmmoLoss * 100f),
+                        (int)(Mod.Config.PerHitPenalties.MinAmmoLoss * 100f)
+                        ) / 100f;
+                    int newAmmo = (int)Math.Floor(ab.CurrentAmmo * ammoReduction);
+                    Mod.Log.Info($"Reducing ammoBox: {mc.UIName} from {ab.CurrentAmmo} x {ammoReduction} = {newAmmo}");
+                    ab.StatCollection.Set<int>(ModStats.AmmoBoxCurrentAmmo, newAmmo);
+                }
+                else
+                {
+                    Mod.Log.Info($"Damaging component: {mc.UIName}");
+                    Text localText = new Text(" - {0}\n", new object[] { mc.UIName });
+                    componentDamageSB.Append(localText.ToString());
 
-                mc.DamageComponent(hitInfo, ComponentDamageLevel.Destroyed, false);
+                    mc.DamageComponent(hitInfo, ComponentDamageLevel.Destroyed, false);
+                }
             }
 
             // Then apply any armor hits
@@ -274,11 +302,25 @@ namespace FieldRepairs.Patches {
             VehicleRepairState repairState = new VehicleRepairState(__instance, targetVehicle);
             foreach (MechComponent mc in repairState.DamagedComponents)
             {
-                Mod.Log.Info($"Damaging component: {mc.UIName}");
-                Text localText = new Text(" - {0}\n", new object[] { mc.UIName });
-                componentDamageSB.Append(localText.ToString());
+                if (mc.componentType == ComponentType.AmmunitionBox)
+                {
+                    AmmunitionBox ab = (AmmunitionBox)mc;
+                    float ammoReduction = Mod.Random.Next(
+                        (int)(Mod.Config.PerHitPenalties.MaxAmmoLoss * 100f),
+                        (int)(Mod.Config.PerHitPenalties.MinAmmoLoss * 100f)
+                        ) / 100f;
+                    int newAmmo = (int)Math.Floor(ab.CurrentAmmo * ammoReduction);
+                    Mod.Log.Info($"Reducing ammoBox: {mc.UIName} from {ab.CurrentAmmo} x {ammoReduction} = {newAmmo}");
+                    ab.StatCollection.Set<int>(ModStats.AmmoBoxCurrentAmmo, newAmmo);
+                }
+                else
+                {
+                    Mod.Log.Info($"Damaging component: {mc.UIName}");
+                    Text localText = new Text(" - {0}\n", new object[] { mc.UIName });
+                    componentDamageSB.Append(localText.ToString());
 
-                mc.DamageComponent(hitInfo, ComponentDamageLevel.Destroyed, false);
+                    mc.DamageComponent(hitInfo, ComponentDamageLevel.Destroyed, false);
+                }
             }
 
             // Then apply any armor hits
