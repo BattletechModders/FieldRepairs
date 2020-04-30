@@ -105,8 +105,8 @@ namespace FieldRepairs {
             public int MinSkillPenalty = 1;
             public int MaxSkillPenalty = 3;
 
-            public float MinAmmoLoss = 0.25f;
-            public float MaxAmmoLoss = 0.05f;
+            public float MinAmmoRemaining = 0.05f;
+            public float MaxAmmoRemaining = 0.25f;
         }
         public HitPenalties PerHitPenalties = new HitPenalties();
 

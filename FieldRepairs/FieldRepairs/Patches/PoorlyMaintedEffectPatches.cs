@@ -55,8 +55,8 @@ namespace FieldRepairs.Patches {
                 {
                     AmmunitionBox ab = (AmmunitionBox)mc;
                     float ammoReduction = Mod.Random.Next(
-                        (int)(Mod.Config.PerHitPenalties.MaxAmmoLoss * 100f),
-                        (int)(Mod.Config.PerHitPenalties.MinAmmoLoss * 100f)
+                        (int)(Mod.Config.PerHitPenalties.MinAmmoRemaining * 100f),
+                        (int)(Mod.Config.PerHitPenalties.MaxAmmoRemaining * 100f)
                         ) / 100f;
                     int newAmmo = (int)Math.Floor(ab.CurrentAmmo * ammoReduction);
                     Mod.Log.Info($"Reducing ammoBox: {mc.UIName} from {ab.CurrentAmmo} x {ammoReduction} = {newAmmo}");
@@ -185,8 +185,8 @@ namespace FieldRepairs.Patches {
                 {
                     AmmunitionBox ab = (AmmunitionBox)mc;
                     float ammoReduction = Mod.Random.Next(
-                        (int)(Mod.Config.PerHitPenalties.MaxAmmoLoss * 100f),
-                        (int)(Mod.Config.PerHitPenalties.MinAmmoLoss * 100f)
+                        (int)(Mod.Config.PerHitPenalties.MinAmmoRemaining * 100f),
+                        (int)(Mod.Config.PerHitPenalties.MaxAmmoRemaining * 100f)
                         ) / 100f;
                     int newAmmo = (int)Math.Floor(ab.CurrentAmmo * ammoReduction);
                     Mod.Log.Info($"Reducing ammoBox: {mc.UIName} from {ab.CurrentAmmo} x {ammoReduction} = {newAmmo}");
@@ -306,8 +306,8 @@ namespace FieldRepairs.Patches {
                 {
                     AmmunitionBox ab = (AmmunitionBox)mc;
                     float ammoReduction = Mod.Random.Next(
-                        (int)(Mod.Config.PerHitPenalties.MaxAmmoLoss * 100f),
-                        (int)(Mod.Config.PerHitPenalties.MinAmmoLoss * 100f)
+                        (int)(Mod.Config.PerHitPenalties.MinAmmoRemaining * 100f),
+                        (int)(Mod.Config.PerHitPenalties.MaxAmmoRemaining * 100f)
                         ) / 100f;
                     int newAmmo = (int)Math.Floor(ab.CurrentAmmo * ammoReduction);
                     Mod.Log.Info($"Reducing ammoBox: {mc.UIName} from {ab.CurrentAmmo} x {ammoReduction} = {newAmmo}");
