@@ -3,6 +3,7 @@ using FieldRepairs.Helper;
 using Harmony;
 using Localize;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using us.frostraptor.modUtils;
 
@@ -46,7 +47,7 @@ namespace FieldRepairs.Patches {
                 null, null, null, null, null, null, null, 
                 new AttackDirection[] { AttackDirection.FromFront }, null, null, null);
 
-            // Apply any structure damage first
+            // Apply any component damage first
             StringBuilder componentDamageSB = new StringBuilder();
             MechRepairState repairState = new MechRepairState(__instance, targetMech);
             foreach (MechComponent mc in repairState.DamagedComponents)
@@ -73,10 +74,12 @@ namespace FieldRepairs.Patches {
             }
 
             int armorOrStructHeadHits = 0;
+            HashSet<ArmorLocation> armorHitLocs = new HashSet<ArmorLocation>();
             // Then apply any armor hits
             for (int i = 0; i < repairState.ArmorHits; i++)
             {
                 ArmorLocation location = LocationHelper.GetRandomMechArmorLocation();
+                armorHitLocs.Add(location);
                 float maxArmor = targetMech.GetMaxArmor(location);
                 float maxDamageRatio = Mod.Random.Next(
                     (int) (Mod.Config.PerHitPenalties.MinArmorLoss * 100), 
@@ -100,9 +103,11 @@ namespace FieldRepairs.Patches {
             }
 
             // We don't limit to armor damage locations here so we can represent that armor is easily scavenged
+            HashSet<ChassisLocations> structHitLocs = new HashSet<ChassisLocations>();
             for (int i = 0; i < repairState.StructureHits; i++)
             {
                 ChassisLocations location = LocationHelper.GetRandomMechStructureLocation();
+                structHitLocs.Add(location);
                 float maxStructure = targetMech.GetMaxStructure(location);
                 float maxDamageRatio = Mod.Random.Next(
                     (int)(Mod.Config.PerHitPenalties.MinStructureLoss * 100),
@@ -133,6 +138,26 @@ namespace FieldRepairs.Patches {
 
             // Build the tooltip
             StringBuilder descSB = new StringBuilder();
+            if (repairState.ArmorHits > 0)
+            {
+                Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_DAMAGE_ARMOR]);
+                descSB.Append(localText.ToString());
+                foreach(ArmorLocation hitLoc in armorHitLocs)
+                {
+                    Text locationText = new Text(" - {0}\n", new object[] { hitLoc });
+                    descSB.Append(locationText.ToString());
+                }
+            }
+            if (repairState.StructureHits > 0)
+            {
+                Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_DAMAGE_STRUCTURE]);
+                descSB.Append(localText.ToString());
+                foreach (ChassisLocations hitLoc in structHitLocs)
+                {
+                    Text locationText = new Text(" - {0}\n", new object[] { hitLoc });
+                    descSB.Append(locationText.ToString());
+                }
+            }
             if (componentDamageSB.Length > 0)
             {
                 Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_DAMAGE_COMP]);
@@ -176,7 +201,6 @@ namespace FieldRepairs.Patches {
                 null, null, null, null, null, null, null,
                 new AttackDirection[] { AttackDirection.FromFront }, null, null, null);
 
-            // Apply any structure damage first
             StringBuilder componentDamageSB = new StringBuilder();
             TurretRepairState repairState = new TurretRepairState(__instance, targetTurret);
             foreach (MechComponent mc in repairState.DamagedComponents)
@@ -259,6 +283,20 @@ namespace FieldRepairs.Patches {
 
             // Build the tooltip
             StringBuilder descSB = new StringBuilder();
+            if (repairState.ArmorHits > 0)
+            {
+                Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_DAMAGE_ARMOR]);
+                descSB.Append(localText.ToString());
+                Text locationText = new Text(" - x{0}\n", new object[] { repairState.ArmorHits });
+                descSB.Append(locationText.ToString());
+            }
+            if (repairState.StructureHits > 0)
+            {
+                Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_DAMAGE_STRUCTURE]);
+                descSB.Append(localText.ToString());
+                Text locationText = new Text(" - x{0}\n", new object[] { repairState.ArmorHits });
+                descSB.Append(locationText.ToString());
+            }
             if (componentDamageSB.Length > 0)
             {
                 Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_DAMAGE_COMP]);
@@ -324,9 +362,11 @@ namespace FieldRepairs.Patches {
             }
 
             // Then apply any armor hits
+            HashSet<VehicleChassisLocations> armorHitLocs = new HashSet<VehicleChassisLocations>();
             for (int i = 0; i < repairState.ArmorHits; i++)
             {
                 VehicleChassisLocations location = LocationHelper.GetRandomVehicleLocation();
+                armorHitLocs.Add(location);
                 float maxArmor = targetVehicle.GetMaxArmor(location);
                 float maxDamageRatio = Mod.Random.Next(
                     (int)(Mod.Config.PerHitPenalties.MinArmorLoss * 100),
@@ -349,9 +389,11 @@ namespace FieldRepairs.Patches {
             }
 
             // We don't limit to armor damage locations here so we can represent that armor is easily scavenged
+            HashSet<VehicleChassisLocations> structHitLocs = new HashSet<VehicleChassisLocations>();
             for (int i = 0; i < repairState.StructureHits; i++)
             {
                 VehicleChassisLocations location = LocationHelper.GetRandomVehicleLocation();
+                structHitLocs.Add(location);
                 float maxStructure = targetVehicle.GetMaxStructure(location);
                 float maxDamageRatio = Mod.Random.Next(
                     (int)(Mod.Config.PerHitPenalties.MinStructureLoss * 100),
@@ -381,6 +423,26 @@ namespace FieldRepairs.Patches {
 
             // Build the tooltip
             StringBuilder descSB = new StringBuilder();
+            if (repairState.ArmorHits > 0)
+            {
+                Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_DAMAGE_ARMOR], new object[] { repairState.ArmorHits });
+                descSB.Append(localText.ToString());
+                foreach (ChassisLocations hitLoc in armorHitLocs)
+                {
+                    Text locationText = new Text(" - {0}\n", new object[] { hitLoc });
+                    descSB.Append(locationText.ToString());
+                }
+            }
+            if (repairState.StructureHits > 0)
+            {
+                Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_DAMAGE_STRUCTURE], new object[] { repairState.StructureHits });
+                descSB.Append(localText.ToString());
+                foreach (ChassisLocations hitLoc in structHitLocs)
+                {
+                    Text locationText = new Text(" - {0}\n", new object[] { hitLoc });
+                    descSB.Append(locationText.ToString());
+                }
+            }
             if (componentDamageSB.Length > 0)
             {
                 Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_DAMAGE_COMP]);

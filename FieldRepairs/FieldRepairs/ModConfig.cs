@@ -116,6 +116,8 @@ namespace FieldRepairs {
         public bool Trace = false;
 
         // Localizations
+        public const string LT_TT_DAMAGE_ARMOR = "ARMOR_DAMAGE";
+        public const string LT_TT_DAMAGE_STRUCTURE = "STRUCT_DAMAGE";
         public const string LT_TT_DAMAGE_COMP = "COMP_DAMAGE";
         public const string LT_TT_DAMAGE_PILOT = "PILOT_DAMAGE";
         public const string LT_TT_DAMAGE_SKILL = "SKILL_DAMAGE";
@@ -130,6 +132,8 @@ namespace FieldRepairs {
 
         public Dictionary<string, string> LocalizedText = new Dictionary<string, string>()
         {
+            { LT_TT_DAMAGE_ARMOR, "<color=#FF0000>ARMOR DAMAGE</color>\n" },
+            { LT_TT_DAMAGE_STRUCTURE, "<color=#FF0000>STRUCTURE DAMAGE</color>\n" },
             { LT_TT_DAMAGE_COMP, "<color=#FF0000>COMPONENT DAMAGE</color>\n" },
             { LT_TT_DAMAGE_PILOT, "<color=#FF0000>HEALTH DAMAGE</color>\n" },
             { LT_TT_DAMAGE_SKILL, "<color=#FF0000>SKILL PENALTY</color>\n" },
