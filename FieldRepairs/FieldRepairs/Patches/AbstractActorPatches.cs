@@ -1,22 +1,22 @@
 ﻿using BattleTech;
 using Harmony;
 using System.Collections.Generic;
-using us.frostraptor.modUtils;
 
 namespace FieldRepairs.Patches {
-    [HarmonyPatch(typeof(AbstractActor), "CreateSpawnEffectByTag")]
-    public static class AbstractActor_CreateSpawnEffectByTag {
-        public static void Prefix(AbstractActor __instance) {
-            Mod.Log.Trace("AA:CSEBT - entered.");
+    //[HarmonyPatch(typeof(AbstractActor), "CreateSpawnEffectByTag")]
+    //public static class AbstractActor_CreateSpawnEffectByTag {
+    //    public static void Prefix(AbstractActor __instance) {
+    //        Mod.Log.Trace("AA:CSEBT - entered.");
 
-            // TODO: Intercept existing CreateEffect call? 
-            // TODO: Set base description defs here?
-        }
-    }
+    //        // TODO: Intercept existing CreateEffect call? 
+    //        // TODO: Set base description defs here?
+    //    }
+    //}
 
     // This patch is necessary to eliminate some NREs when actors spawn and effects that target visibility or 
     //   pathfinder effects fire. This can occur before the UI is available, which is what causes these errors.
     //   When FR is processing damage, suppress the visibility and pathfinder updates.
+    [HarmonyPatch(typeof(AbstractActor), "OnEffectEnd")]
     static class AbstractActor_OnEffectEnd
     {
         static bool Prefix(AbstractActor __instance, Effect effect, List<Effect> ___markEffects, int ___StealthPipsPrevious)
