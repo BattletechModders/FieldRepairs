@@ -17,11 +17,11 @@ namespace FieldRepairs.Patches
     {
         static bool Prefix(ICombatant combatant, ref bool useCamera)
         {
-            Mod.Log.Trace("SAIS:ctor - entered.");
+            Mod.Log.Trace?.Write("SAIS:ctor - entered.");
 
             if (ModState.SuppressShowActorSequences)
             {
-                Mod.Log.Trace("Suppressing floaties by forcing camera to false.");
+                Mod.Log.Trace?.Write("Suppressing floaties by forcing camera to false.");
                 useCamera = false;
             }
 
@@ -32,7 +32,7 @@ namespace FieldRepairs.Patches
         {
             if (ModState.SuppressShowActorSequences)
             {
-                Mod.Log.Trace("Suppressing floaties by forcing state to finished.");
+                Mod.Log.Trace?.Write("Suppressing floaties by forcing state to finished.");
                 Traverse stateT = new Traverse(typeof(ShowActorInfoSequence)).Property("state").SetValue(3);
             }
 

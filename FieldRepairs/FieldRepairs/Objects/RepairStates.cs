@@ -17,28 +17,28 @@ namespace FieldRepairs {
                 {
                     effectRating = 25;
                     stateRolls = Mod.Random.Next(rollCfg.PM25_MinRolls, rollCfg.PM25_MaxRolls);
-                    Mod.Log.Debug($"25% effect supplied, stateRolls = {stateRolls}");
+                    Mod.Log.Debug?.Write($"25% effect supplied, stateRolls = {stateRolls}");
                 }
                 else if (effect.EffectData.poorlyMaintainedEffectData.armorMod == 0.5f)
                 {
                     effectRating = 50;
                     stateRolls = Mod.Random.Next(rollCfg.PM50_MinRolls, rollCfg.PM50_MaxRolls);
-                    Mod.Log.Debug($"50% effect supplied, stateRolls = {stateRolls}");
+                    Mod.Log.Debug?.Write($"50% effect supplied, stateRolls = {stateRolls}");
                 }
                 else if (effect.EffectData.poorlyMaintainedEffectData.armorMod == 0.75f)
                 {
                     effectRating = 75;
                     stateRolls = Mod.Random.Next(rollCfg.PM75_MinRolls, rollCfg.PM75_MaxRolls);
-                    Mod.Log.Debug($"75% effect supplied, stateRolls = {stateRolls}");
+                    Mod.Log.Debug?.Write($"75% effect supplied, stateRolls = {stateRolls}");
                 } 
                 else
                 {
-                    Mod.Log.Debug($"Unknown effect, stateRolls = {stateRolls}");
+                    Mod.Log.Debug?.Write($"Unknown effect, stateRolls = {stateRolls}");
                 }
             }
             else
             {
-                Mod.Log.Debug($"Unknown effect or config stateRolls = {stateRolls}");
+                Mod.Log.Debug?.Write($"Unknown effect or config stateRolls = {stateRolls}");
             }
         }
     }

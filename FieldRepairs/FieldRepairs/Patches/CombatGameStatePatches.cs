@@ -11,7 +11,7 @@ namespace FieldRepairs.Patches {
         public static void Postfix(CombatGameState __instance) {
             int themeIdx = Mod.Random.Next(0, Mod.Config.Themes.Count - 1);
             ModState.CurrentTheme = Mod.Config.Themes[themeIdx];
-            Mod.Log.Info($"Set StateTheme to: {ModState.CurrentTheme}");
+            Mod.Log.Info?.Write($"Set StateTheme to: {ModState.CurrentTheme}");
         }
     }
 

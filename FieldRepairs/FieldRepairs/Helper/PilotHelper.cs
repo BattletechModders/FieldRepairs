@@ -32,7 +32,7 @@ namespace FieldRepairs.Helper
                     healthDamage = healthDamage - target.GetPilot().BonusHealth;
                 }
 
-                Mod.Log.Debug($"Bonus health aborbs: {absorbedDamage} leaving: {healthDamage} healthDamage.");
+                Mod.Log.Debug?.Write($"Bonus health aborbs: {absorbedDamage} leaving: {healthDamage} healthDamage.");
                 target.GetPilot().StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID,
                     "BonusHealth", StatCollection.StatOperation.Int_Subtract, absorbedDamage, -1, true);
                 Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_PILOT_BONUS_HEALTH], new object[] { absorbedDamage });
@@ -41,13 +41,13 @@ namespace FieldRepairs.Helper
 
             if (healthDamage > (target.GetPilot().Health - 1))
             {
-                Mod.Log.Debug($"Health damage: {healthDamage} would kill pilot, reducing to maxHealth: {target.GetPilot().Health} - 1");
+                Mod.Log.Debug?.Write($"Health damage: {healthDamage} would kill pilot, reducing to maxHealth: {target.GetPilot().Health} - 1");
                 healthDamage = target.GetPilot().Health - 1;
             }
 
             if (healthDamage > 0)
             {
-                Mod.Log.Info($"Adding {healthDamage} to {CombatantUtils.Label(target)}");
+                Mod.Log.Info?.Write($"Adding {healthDamage} to {CombatantUtils.Label(target)}");
                 target.GetPilot().StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID,
                     "Injuries", StatCollection.StatOperation.Int_Add, healthDamage, -1, true);
                 Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_PILOT_HEALTH], new object[] { healthDamage });
@@ -67,13 +67,13 @@ namespace FieldRepairs.Helper
                 return;
             }
 
-            Mod.Log.Info($"Applying {skillDamageHits} hits to pilot skills to: {CombatantUtils.Label(target)}");
+            Mod.Log.Info?.Write($"Applying {skillDamageHits} hits to pilot skills to: {CombatantUtils.Label(target)}");
             int combinedPenalty = 0;
             for (int i = 0; i < skillDamageHits; i++)
             {
                 combinedPenalty += Mod.Random.Next(Mod.Config.PerHitPenalties.MinSkillPenalty, Mod.Config.PerHitPenalties.MaxSkillPenalty);
             }
-            Mod.Log.Info($"  A total penalty of -{combinedPenalty} will be applied to all pilot skills");
+            Mod.Log.Info?.Write($"  A total penalty of -{combinedPenalty} will be applied to all pilot skills");
 
             Pilot targetPilot = target.GetPilot();
 
@@ -82,7 +82,7 @@ namespace FieldRepairs.Helper
             int tacticsMod = targetPilot.Tactics - combinedPenalty >= 1 ? combinedPenalty : targetPilot.Tactics - 1;
             int gutsMod = targetPilot.Guts - combinedPenalty >= 1 ? combinedPenalty : targetPilot.Guts - 1;
 
-            Mod.Log.Debug($"  reducing piloting: -{pilotingMod}  gunnery: -{gunneryMod}  tactics: -{tacticsMod}  guts: -{gutsMod}"); ;
+            Mod.Log.Debug?.Write($"  reducing piloting: -{pilotingMod}  gunnery: -{gunneryMod}  tactics: -{tacticsMod}  guts: -{gutsMod}"); ;
 
             targetPilot.StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID,
                 "Piloting", StatCollection.StatOperation.Int_Subtract, pilotingMod, -1, true);

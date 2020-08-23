@@ -44,7 +44,7 @@ namespace FieldRepairs {
                         case DamageType.Skill:
                             PilotSkillHits++;
                             isResolved = true;
-                            Mod.Log.Debug($"  {i} is damageType: {damageType}.");
+                            Mod.Log.Debug?.Write($"  {i} is damageType: {damageType}.");
                             break;
                         case DamageType.Gyro:
                             // Only accept 1 gyro hit, then fallback
@@ -55,7 +55,7 @@ namespace FieldRepairs {
                                 compSummary.GyroParts.Remove(gyroComp);
                                 gyroHits++;
                                 isResolved = true;
-                                Mod.Log.Debug($"  {i} is damageType: {damageType}.");
+                                Mod.Log.Debug?.Write($"  {i} is damageType: {damageType}.");
                             }
                             break;
                         case DamageType.Engine:
@@ -67,7 +67,7 @@ namespace FieldRepairs {
                                 compSummary.EngineParts.Remove(engineComp);
                                 engineHits++;
                                 isResolved = true;
-                                Mod.Log.Debug($"  {i} is damageType: {damageType}.");
+                                Mod.Log.Debug?.Write($"  {i} is damageType: {damageType}.");
                             }
                             break;
                         case DamageType.HeatSink:
@@ -77,7 +77,7 @@ namespace FieldRepairs {
                                 DamagedComponents.Add(heatSink);
                                 compSummary.HeatSinks.Remove(heatSink);
                                 isResolved = true;
-                                Mod.Log.Debug($"  {i} is damageType: {damageType}.");
+                                Mod.Log.Debug?.Write($"  {i} is damageType: {damageType}.");
                             }
                             break;
                         case DamageType.AmmoBox:
@@ -87,7 +87,7 @@ namespace FieldRepairs {
                                 DamagedComponents.Add(ammoBox);
                                 compSummary.AmmoBoxes.Remove(ammoBox);
                                 isResolved = true;
-                                Mod.Log.Debug($"  {i} is damageType: {damageType}.");
+                                Mod.Log.Debug?.Write($"  {i} is damageType: {damageType}.");
                             }
                             break;
                         case DamageType.Component:
@@ -97,7 +97,7 @@ namespace FieldRepairs {
                                 DamagedComponents.Add(component);
                                 compSummary.Components.Remove(component);
                                 isResolved = true;
-                                Mod.Log.Debug($"  {i} is damageType: {damageType}.");
+                                Mod.Log.Debug?.Write($"  {i} is damageType: {damageType}.");
                             }
                             break;
                         case DamageType.Weapon:
@@ -108,18 +108,18 @@ namespace FieldRepairs {
                                 DamagedComponents.Add(weapon);
                                 compSummary.Weapons.Remove(weapon);
                                 isResolved = true;
-                                Mod.Log.Debug($"  {i} is damageType: {damageType}.");
+                                Mod.Log.Debug?.Write($"  {i} is damageType: {damageType}.");
                             }
                             break;
                         case DamageType.Structure:
                             StructureHits++;
                             isResolved = true;
-                            Mod.Log.Debug($"  {i} is damageType: {damageType}.");
+                            Mod.Log.Debug?.Write($"  {i} is damageType: {damageType}.");
                             break;
                         case DamageType.Armor:
                             ArmorHits++;
                             isResolved = true;
-                            Mod.Log.Debug($"  {i} is damageType: {damageType}.");
+                            Mod.Log.Debug?.Write($"  {i} is damageType: {damageType}.");
                             break;
                     }
 
@@ -127,7 +127,7 @@ namespace FieldRepairs {
 
                     if (killSwitch > 30)
                     {
-                        Mod.Log.Info("Too many iterating, stopping and moving forward.");
+                        Mod.Log.Info?.Write("Too many iterating, stopping and moving forward.");
                     }
                 }
             }
@@ -139,7 +139,7 @@ namespace FieldRepairs {
             ComponentSummary compSummary = new ComponentSummary();
             foreach (MechComponent mc in targetMech.allComponents)
             {
-                Mod.Log.Debug($"Checking component: {mc.Name} / {mc.UIName} / {mc.Description.UIName}");
+                Mod.Log.Debug?.Write($"Checking component: {mc.Name} / {mc.UIName} / {mc.Description.UIName}");
 
 
                 bool isBlacklisted = false;
@@ -150,57 +150,57 @@ namespace FieldRepairs {
 
                 if (mc.componentDef.CriticalComponent)
                 {
-                    Mod.Log.Debug($"  - Skipping critical component: {mc.Description.UIName} in location: {(ChassisLocations)mc.Location}");
+                    Mod.Log.Debug?.Write($"  - Skipping critical component: {mc.Description.UIName} in location: {(ChassisLocations)mc.Location}");
                 }
                 else if (isBlacklisted)
                 {
-                    Mod.Log.Debug($"  - Skipping blacklisted component: {mc.Description.UIName}");
+                    Mod.Log.Debug?.Write($"  - Skipping blacklisted component: {mc.Description.UIName}");
                 }
                 else if (mc.componentDef.IsCategory(Mod.Config.CustomComponentCategories.Gyros))
                 {
-                    Mod.Log.Debug($"  - Found gyro: {mc.Description.UIName}");
+                    Mod.Log.Debug?.Write($"  - Found gyro: {mc.Description.UIName}");
                     compSummary.GyroParts.Add(mc);
                     if (mc.componentDef.Is<CriticalEffects>(out CriticalEffects meCritEffects) && 
                         meCritEffects.MaxHits > compSummary.MaxGyroHits)
                     {
                         compSummary.MaxGyroHits = meCritEffects.MaxHits;
-                        Mod.Log.Debug($"      gyro has maxhits: {compSummary.MaxGyroHits}");
+                        Mod.Log.Debug?.Write($"      gyro has maxhits: {compSummary.MaxGyroHits}");
                     }
                 }
                 else if (mc.componentDef.IsCategory(Mod.Config.CustomComponentCategories.EngineParts)) 
                 {
-                    Mod.Log.Debug($"  - Found engine: {mc.Description.UIName}");
+                    Mod.Log.Debug?.Write($"  - Found engine: {mc.Description.UIName}");
                     compSummary.EngineParts.Add(mc);
                     if (mc.componentDef.Is<MechCriticalEffects>(out MechCriticalEffects meCritEffects) && 
                         meCritEffects.MaxHits > compSummary.MaxEngineHits)
                     {
                         compSummary.MaxEngineHits = meCritEffects.MaxHits;
-                        Mod.Log.Debug($"      engine has maxhits: {compSummary.MaxEngineHits}");
+                        Mod.Log.Debug?.Write($"      engine has maxhits: {compSummary.MaxEngineHits}");
                     }
                 }
                 else if (mc.componentType == ComponentType.AmmunitionBox)
                 {
-                    Mod.Log.Debug($"  - Found ammoBox: {mc.Description.UIName}");
+                    Mod.Log.Debug?.Write($"  - Found ammoBox: {mc.Description.UIName}");
                     compSummary.AmmoBoxes.Add((AmmunitionBox)mc);
                 }
                 else if (mc.componentType == ComponentType.HeatSink)
                 {
-                    Mod.Log.Debug($"  - Found heatSink: {mc.Description.UIName}");
+                    Mod.Log.Debug?.Write($"  - Found heatSink: {mc.Description.UIName}");
                     compSummary.HeatSinks.Add(mc);
                 }
                 else if (mc.componentType == ComponentType.Weapon)
                 {
-                    Mod.Log.Debug($"  - Found weapon: {mc.Description.UIName}");
+                    Mod.Log.Debug?.Write($"  - Found weapon: {mc.Description.UIName}");
                     compSummary.Weapons.Add(mc);
                     // Check weapons for volatile? If we don't apply effects, do we care?                    
                     if (mc.componentDef.Is<ComponentExplosion>(out ComponentExplosion compExp))
                     {
-                        Mod.Log.Debug($"      weapon has component explosion: {compExp.ExplosionDamage} / {compExp.HeatDamage} / {compExp.StabilityDamage}");                        
+                        Mod.Log.Debug?.Write($"      weapon has component explosion: {compExp.ExplosionDamage} / {compExp.HeatDamage} / {compExp.StabilityDamage}");                        
                     }
                 }
                 else
                 {
-                    Mod.Log.Debug($"  - Found component: {mc.Description.UIName} in location: {mc.Location}");
+                    Mod.Log.Debug?.Write($"  - Found component: {mc.Description.UIName} in location: {mc.Location}");
                     compSummary.Components.Add(mc);
                 }
             }
