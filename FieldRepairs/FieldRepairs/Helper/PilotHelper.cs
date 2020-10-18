@@ -45,11 +45,18 @@ namespace FieldRepairs.Helper
                 healthDamage = target.GetPilot().Health - 1;
             }
 
-            if (healthDamage > 0)
+            if (healthDamage > 0 && !Mod.Config.EnableTBAS_Injuries)
             {
                 Mod.Log.Info?.Write($"Adding {healthDamage} to {CombatantUtils.Label(target)}");
                 target.GetPilot().StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID,
                     "Injuries", StatCollection.StatOperation.Int_Add, healthDamage, -1, true);
+                Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_PILOT_HEALTH], new object[] { healthDamage });
+                pilotDamageSB.Append(localText.ToString());
+            }
+            else if (healthDamage > 0 && Mod.Config.EnableTBAS_Injuries)
+            {
+                Mod.Log.Info?.Write($"Adding {healthDamage} TBAS Injuries to {CombatantUtils.Label(target)}");
+                target.GetPilot().InjurePilot(hitInfo.attackerId, hitInfo.stackItemUID, healthDamage, BattleTech.DamageType.NOT_SET, null, null);
                 Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_PILOT_HEALTH], new object[] { healthDamage });
                 pilotDamageSB.Append(localText.ToString());
             }

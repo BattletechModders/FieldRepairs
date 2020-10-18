@@ -9,8 +9,9 @@ namespace FieldRepairs {
         public const string AmmoBoxCurrentAmmo = "CurrentAmmo";
     }
 
-    public class ModConfig {
-
+    public class ModConfig
+    {
+        
         public class SkirmishConfig 
         {
             /* A tag to apply to enemy units during skirmish matches. Can be one of the vanilla tags for now:
@@ -110,6 +111,8 @@ namespace FieldRepairs {
         }
         public HitPenalties PerHitPenalties = new HitPenalties();
 
+        //lets TisButAScratch handle pilot injuries
+        public bool EnableTBAS_Injuries = false;
         // If true, many logs will be printed
         public bool Debug = false;
         // If true, all logs will be printed
