@@ -113,6 +113,8 @@ namespace FieldRepairs {
 
         //lets TisButAScratch handle pilot injuries
         public bool EnableTBAS_Injuries = false;
+        //disable injuries for TrooperSquads
+        public bool DisableInjuriesForTroopers = true;
         // If true, many logs will be printed
         public bool Debug = false;
         // If true, all logs will be printed
