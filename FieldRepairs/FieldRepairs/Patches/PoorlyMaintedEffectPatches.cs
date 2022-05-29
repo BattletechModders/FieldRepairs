@@ -1,7 +1,9 @@
 ﻿using BattleTech;
+using CustomComponents;
 using FieldRepairs.Helper;
 using Harmony;
 using Localize;
+using MechEngineer.Features.CriticalEffects;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -66,7 +68,13 @@ namespace FieldRepairs.Patches {
                 else
                 {
                     Mod.Log.Info?.Write($"Damaging component: {mc.UIName}");
-                    mc.DamageComponent(hitInfo, ComponentDamageLevel.Destroyed, false);
+
+                    ComponentDamageLevel damageLevel = ComponentDamageLevel.Destroyed;
+                    if (mc.componentDef.Is<CriticalEffects>(out CriticalEffects meCritEffects) && meCritEffects.MaxHits > 1)
+                    {
+                        damageLevel = ComponentDamageLevel.Penalized;
+                    }
+                    mc.DamageComponent(hitInfo, damageLevel, false);
                 }
                 Text localText = new Text(" - {0}\n", new object[] { mc.UIName });
                 componentDamageSB.Append(localText.ToString());
@@ -77,7 +85,7 @@ namespace FieldRepairs.Patches {
             // Then apply any armor hits
             for (int i = 0; i < repairState.ArmorHits; i++)
             {
-                ArmorLocation location = LocationHelper.GetRandomMechArmorLocation();
+                ArmorLocation location = Helper.LocationHelper.GetRandomMechArmorLocation();
                 armorHitLocs.Add(location);
                 float maxArmor = targetMech.GetMaxArmor(location);
                 float maxDamageRatio = Mod.Random.Next(
@@ -105,7 +113,7 @@ namespace FieldRepairs.Patches {
             HashSet<ChassisLocations> structHitLocs = new HashSet<ChassisLocations>();
             for (int i = 0; i < repairState.StructureHits; i++)
             {
-                ChassisLocations location = LocationHelper.GetRandomMechStructureLocation();
+                ChassisLocations location = Helper.LocationHelper.GetRandomMechStructureLocation();
                 structHitLocs.Add(location);
                 float maxStructure = targetMech.GetMaxStructure(location);
                 float maxDamageRatio = Mod.Random.Next(
@@ -218,11 +226,17 @@ namespace FieldRepairs.Patches {
                 else
                 {
                     Mod.Log.Info?.Write($"Damaging component: {mc.UIName}");
-                    Text localText = new Text(" - {0}\n", new object[] { mc.UIName });
-                    componentDamageSB.Append(localText.ToString());
 
-                    mc.DamageComponent(hitInfo, ComponentDamageLevel.Destroyed, false);
+                    ComponentDamageLevel damageLevel = ComponentDamageLevel.Destroyed;
+                    if (mc.componentDef.Is<CriticalEffects>(out CriticalEffects meCritEffects) && meCritEffects.MaxHits > 1)
+                    {
+                        damageLevel = ComponentDamageLevel.Penalized;
+                    }
+                    mc.DamageComponent(hitInfo, damageLevel, false);
                 }
+
+                Text localText = new Text(" - {0}\n", new object[] { mc.UIName });
+                componentDamageSB.Append(localText.ToString());
             }
 
             // Then apply any armor hits
@@ -353,18 +367,23 @@ namespace FieldRepairs.Patches {
                 else
                 {
                     Mod.Log.Info?.Write($"Damaging component: {mc.UIName}");
-                    Text localText = new Text(" - {0}\n", new object[] { mc.UIName });
-                    componentDamageSB.Append(localText.ToString());
-
-                    mc.DamageComponent(hitInfo, ComponentDamageLevel.Destroyed, false);
+                    ComponentDamageLevel damageLevel = ComponentDamageLevel.Destroyed;
+                    if (mc.componentDef.Is<CriticalEffects>(out CriticalEffects meCritEffects) && meCritEffects.MaxHits > 1)
+                    {
+                        damageLevel = ComponentDamageLevel.Penalized;
+                    }
+                    mc.DamageComponent(hitInfo, damageLevel, false);
                 }
+
+                Text localText = new Text(" - {0}\n", new object[] { mc.UIName });
+                componentDamageSB.Append(localText.ToString());
             }
 
             // Then apply any armor hits
             HashSet<VehicleChassisLocations> armorHitLocs = new HashSet<VehicleChassisLocations>();
             for (int i = 0; i < repairState.ArmorHits; i++)
             {
-                VehicleChassisLocations location = LocationHelper.GetRandomVehicleLocation();
+                VehicleChassisLocations location = Helper.LocationHelper.GetRandomVehicleLocation();
                 armorHitLocs.Add(location);
                 float maxArmor = targetVehicle.GetMaxArmor(location);
                 float maxDamageRatio = Mod.Random.Next(
@@ -391,7 +410,7 @@ namespace FieldRepairs.Patches {
             HashSet<VehicleChassisLocations> structHitLocs = new HashSet<VehicleChassisLocations>();
             for (int i = 0; i < repairState.StructureHits; i++)
             {
-                VehicleChassisLocations location = LocationHelper.GetRandomVehicleLocation();
+                VehicleChassisLocations location = Helper.LocationHelper.GetRandomVehicleLocation();
                 structHitLocs.Add(location);
                 float maxStructure = targetVehicle.GetMaxStructure(location);
                 float maxDamageRatio = Mod.Random.Next(
