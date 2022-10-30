@@ -70,7 +70,7 @@ namespace FieldRepairs.Patches {
                     Mod.Log.Info?.Write($"Damaging component: {mc.UIName}");
 
                     ComponentDamageLevel damageLevel = ComponentDamageLevel.Destroyed;
-                    if (mc.componentDef.Is<CriticalEffects>(out CriticalEffects meCritEffects) && meCritEffects.MaxHits > 1)
+                    if (mc.componentDef.Is<CriticalEffectsCustom>(out CriticalEffectsCustom meCritEffects) && meCritEffects.MaxHits > 1)
                     {
                         damageLevel = ComponentDamageLevel.Penalized;
                     }
@@ -228,7 +228,7 @@ namespace FieldRepairs.Patches {
                     Mod.Log.Info?.Write($"Damaging component: {mc.UIName}");
 
                     ComponentDamageLevel damageLevel = ComponentDamageLevel.Destroyed;
-                    if (mc.componentDef.Is<CriticalEffects>(out CriticalEffects meCritEffects) && meCritEffects.MaxHits > 1)
+                    if (mc.componentDef.Is<CriticalEffectsCustom>(out CriticalEffectsCustom meCritEffects) && meCritEffects.MaxHits > 1)
                     {
                         damageLevel = ComponentDamageLevel.Penalized;
                     }
@@ -368,7 +368,7 @@ namespace FieldRepairs.Patches {
                 {
                     Mod.Log.Info?.Write($"Damaging component: {mc.UIName}");
                     ComponentDamageLevel damageLevel = ComponentDamageLevel.Destroyed;
-                    if (mc.componentDef.Is<CriticalEffects>(out CriticalEffects meCritEffects) && meCritEffects.MaxHits > 1)
+                    if (mc.componentDef.Is<CriticalEffectsCustom>(out CriticalEffectsCustom meCritEffects) && meCritEffects.MaxHits > 1)
                     {
                         damageLevel = ComponentDamageLevel.Penalized;
                     }
