@@ -160,7 +160,7 @@ namespace FieldRepairs {
                 {
                     Mod.Log.Debug?.Write($"  - Found gyro: {mc.Description.UIName}");
                     compSummary.GyroParts.Add(mc);
-                    if (mc.componentDef.Is<CriticalEffects>(out CriticalEffects meCritEffects) && 
+                    if (mc.componentDef.Is<CriticalEffectsCustom>(out CriticalEffectsCustom meCritEffects) && 
                         meCritEffects.MaxHits > compSummary.MaxGyroHits)
                     {
                         compSummary.MaxGyroHits = meCritEffects.MaxHits;
@@ -171,7 +171,7 @@ namespace FieldRepairs {
                 {
                     Mod.Log.Debug?.Write($"  - Found engine: {mc.Description.UIName}");
                     compSummary.EngineParts.Add(mc);
-                    if (mc.componentDef.Is<MechCriticalEffects>(out MechCriticalEffects meCritEffects) && 
+                    if (mc.componentDef.Is<MechCriticalEffectsCustom>(out MechCriticalEffectsCustom meCritEffects) && 
                         meCritEffects.MaxHits > compSummary.MaxEngineHits)
                     {
                         compSummary.MaxEngineHits = meCritEffects.MaxHits;
