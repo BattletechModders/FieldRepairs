@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace FieldRepairs
+{
 
-namespace FieldRepairs {
-
-    public enum DamageType {
+    public enum DamageType
+    {
         Armor,
         Structure,
         Component,

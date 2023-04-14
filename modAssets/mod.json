@@ -1,7 +1,7 @@
 {
     "Name": "FieldRepairs",
     "Enabled": true,
-    "Version": "0.1.12",
+    "Version": "2.0.0",
     "Description": "Replaces armor damage with random criticals and structure damage representing real damage.",
     "Author": "IceRaptor",
     "Website": "https://github.com/IceRaptor/FieldRepairs",

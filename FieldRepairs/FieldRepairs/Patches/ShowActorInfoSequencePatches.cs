@@ -1,6 +1,4 @@
-﻿using BattleTech;
-using Harmony;
-using Localize;
+﻿using Localize;
 using System;
 
 namespace FieldRepairs.Patches

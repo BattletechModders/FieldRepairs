@@ -1,11 +1,10 @@
-﻿using BattleTech;
-using Harmony;
-using us.frostraptor.modUtils;
-
-namespace FieldRepairs.Patches {
+﻿namespace FieldRepairs.Patches
+{
     [HarmonyPatch(typeof(UnitSpawnPointGameLogic), "Spawn")]
-    public static class UnitSpawnPointGameLogic_Spawn {
-        public static void Prefix(UnitSpawnPointGameLogic __instance, string ___teamDefinitionGuid) {
+    public static class UnitSpawnPointGameLogic_Spawn
+    {
+        public static void Prefix(UnitSpawnPointGameLogic __instance, string ___teamDefinitionGuid)
+        {
             Mod.Log.Trace?.Write("USPGL:S - entered.");
             if (Mod.Config.Skirmish.Tag != null && !Mod.Config.Skirmish.Tag.Equals(""))
             {

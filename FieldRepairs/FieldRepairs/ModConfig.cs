@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FieldRepairs {
+namespace FieldRepairs
+{
 
-    public static class ModStats 
+    public static class ModStats
     {
         public const string TestStat = "IRFR_TestStat";
         public const string AmmoBoxCurrentAmmo = "CurrentAmmo";
@@ -11,8 +12,8 @@ namespace FieldRepairs {
 
     public class ModConfig
     {
-        
-        public class SkirmishConfig 
+
+        public class SkirmishConfig
         {
             /* A tag to apply to enemy units during skirmish matches. Can be one of the vanilla tags for now:
              * spawn_poorly_maintained_25
@@ -57,7 +58,8 @@ namespace FieldRepairs {
 
             };
 
-            public UnitRollCfg TurretRolls = new UnitRollCfg() {
+            public UnitRollCfg TurretRolls = new UnitRollCfg()
+            {
                 PM25_MinRolls = 1,
                 PM25_MaxRolls = 3,
                 PM50_MinRolls = 1,
@@ -68,7 +70,7 @@ namespace FieldRepairs {
         }
         public DamageRollCfg DamageRollsConfig = new DamageRollCfg();
 
-        public class ThemeConfig 
+        public class ThemeConfig
         {
             public const int MaxWeightItems = 10;
 
@@ -152,10 +154,11 @@ namespace FieldRepairs {
             { LT_TT_PILOT_BONUS_HEALTH, " - Bonus Health: -{0}\n" },
         };
 
-        public void LogConfig() {
+        public void LogConfig()
+        {
             Mod.Log.Info?.Write("=== MOD CONFIG BEGIN ===");
             Mod.Log.Info?.Write($"  DEBUG:{this.Debug} Trace:{this.Trace}");
-            
+
             Mod.Log.Info?.Write(" --- SKIRMISH ---");
             Mod.Log.Info?.Write($"  TAG: {this.Skirmish.Tag}");
 
@@ -179,8 +182,8 @@ namespace FieldRepairs {
                 $"Blacklisted: {String.Join(", ", this.CustomComponentCategories.Blacklisted)}");
 
             Mod.Log.Info?.Write(" --- PER HIT PENALTIES ---");
-            Mod.Log.Info?.Write($"  ArmorLoss =>  min: {this.PerHitPenalties.MinArmorLoss} max: {this.PerHitPenalties.MaxArmorLoss }");
-            Mod.Log.Info?.Write($"  StructureLoss =>  min: {this.PerHitPenalties.MinStructureLoss} max: {this.PerHitPenalties.MaxStructureLoss }");
+            Mod.Log.Info?.Write($"  ArmorLoss =>  min: {this.PerHitPenalties.MinArmorLoss} max: {this.PerHitPenalties.MaxArmorLoss}");
+            Mod.Log.Info?.Write($"  StructureLoss =>  min: {this.PerHitPenalties.MinStructureLoss} max: {this.PerHitPenalties.MaxStructureLoss}");
             Mod.Log.Info?.Write($"  SkillPenalty =>  min: {this.PerHitPenalties.MinSkillPenalty} max: {this.PerHitPenalties.MaxSkillPenalty}");
 
             Mod.Log.Info?.Write(" --- THEMES ---");
@@ -196,7 +199,8 @@ namespace FieldRepairs {
             Mod.Log.Info?.Write("=== MOD CONFIG END ===");
         }
 
-        public void Init() {
+        public void Init()
+        {
             Mod.Log.Debug?.Write(" == Initializing Configuration");
 
             foreach (ThemeConfig themeConfig in Themes)
@@ -209,9 +213,11 @@ namespace FieldRepairs {
         }
 
         // Translate the strings in the config to enum types
-        private void WeightToDamageType(ThemeConfig theme) {
+        private void WeightToDamageType(ThemeConfig theme)
+        {
 
-            for (int i = 0; i < ThemeConfig.MaxWeightItems; i++) {
+            for (int i = 0; i < ThemeConfig.MaxWeightItems; i++)
+            {
                 string mechDamageTypeId = theme.MechWeights[i];
                 DamageType mechDamageType = (DamageType)Enum.Parse(typeof(DamageType), mechDamageTypeId);
                 theme.MechTable[i] = mechDamageType;

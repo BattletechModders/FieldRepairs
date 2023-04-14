@@ -1,13 +1,14 @@
-﻿using Harmony;
-using IRBTModUtils.Logging;
+﻿using IRBTModUtils.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace FieldRepairs {
+namespace FieldRepairs
+{
 
-    public static class Mod {
+    public static class Mod
+    {
 
         public const string HarmonyPackage = "us.frostraptor.FieldRepairs";
         public const string LogName = "field_repairs";
@@ -19,13 +20,17 @@ namespace FieldRepairs {
 
         public static readonly Random Random = new Random();
 
-        public static void Init(string modDirectory, string settingsJSON) {
+        public static void Init(string modDirectory, string settingsJSON)
+        {
             ModDir = modDirectory;
 
             Exception settingsE = null;
-            try {
+            try
+            {
                 Mod.Config = JsonConvert.DeserializeObject<ModConfig>(settingsJSON);
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 settingsE = e;
                 Mod.Config = new ModConfig();
             }
@@ -34,7 +39,7 @@ namespace FieldRepairs {
 
             Assembly asm = Assembly.GetExecutingAssembly();
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(asm.Location);
-            Log.Info?.Write($"Assembly version: {fvi.ProductVersion}");
+            Log.Info?.Write($"Assembly version: {fvi.FileVersion}");
 
             // Initialize the mod settings
             Mod.Config.Init();
@@ -43,15 +48,17 @@ namespace FieldRepairs {
             Log.Debug?.Write($"mod.json settings are:({settingsJSON})");
             Mod.Config.LogConfig();
 
-            if (settingsE != null) {
+            if (settingsE != null)
+            {
                 Log.Info?.Write($"ERROR reading settings file! Error was: {settingsE}");
-            } else {
+            }
+            else
+            {
                 Log.Info?.Write($"INFO: No errors reading settings file.");
             }
 
             // Initialize modules
-            var harmony = HarmonyInstance.Create(HarmonyPackage);
-            harmony.PatchAll(Assembly.GetExecutingAssembly());
+            Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), HarmonyPackage);
 
         }
 

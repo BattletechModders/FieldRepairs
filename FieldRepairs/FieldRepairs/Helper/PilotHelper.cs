@@ -1,5 +1,4 @@
-﻿using BattleTech;
-using Localize;
+﻿using Localize;
 using System.Text;
 using us.frostraptor.modUtils;
 
@@ -58,7 +57,7 @@ namespace FieldRepairs.Helper
                     target.GetPilot().StatCollection.ModifyStat<int>(hitInfo.attackerId, hitInfo.stackItemUID,
                         "Injuries", StatCollection.StatOperation.Int_Add, healthDamage, -1, true);
                     Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_PILOT_HEALTH],
-                        new object[] {healthDamage});
+                        new object[] { healthDamage });
                     pilotDamageSB.Append(localText.ToString());
                 }
                 else if (healthDamage > 0 && Mod.Config.EnableTBAS_Injuries)
@@ -67,7 +66,7 @@ namespace FieldRepairs.Helper
                     target.GetPilot().InjurePilot(hitInfo.attackerId, hitInfo.stackItemUID, healthDamage,
                         BattleTech.DamageType.NOT_SET, null, null);
                     Text localText = new Text(Mod.Config.LocalizedText[ModConfig.LT_TT_PILOT_HEALTH],
-                        new object[] {healthDamage});
+                        new object[] { healthDamage });
                     pilotDamageSB.Append(localText.ToString());
                 }
             }

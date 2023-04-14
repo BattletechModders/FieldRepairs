@@ -1,6 +1,5 @@
-﻿using BattleTech;
-
-namespace FieldRepairs.Helper {
+﻿namespace FieldRepairs.Helper
+{
 
     public static class LocationHelper
     {

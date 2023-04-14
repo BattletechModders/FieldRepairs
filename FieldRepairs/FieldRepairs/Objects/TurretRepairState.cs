@@ -1,12 +1,11 @@
-﻿using BattleTech;
-using CustomComponents;
-using MechEngineer.Features.ComponentExplosions;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using static FieldRepairs.ModConfig;
 
-namespace FieldRepairs {
+namespace FieldRepairs
+{
 
-    public class TurretRepairState : RepairState {
+    public class TurretRepairState : RepairState
+    {
         public readonly Turret Target;
 
         public readonly int ArmorHits;
@@ -142,7 +141,7 @@ namespace FieldRepairs {
                     // Check weapons for volatile? If we don't apply effects, do we care?                    
                     if (mc.componentDef.Is<ComponentExplosion>(out ComponentExplosion compExp))
                     {
-                        Mod.Log.Debug?.Write($"      weapon has component explosion: {compExp.ExplosionDamage} / {compExp.HeatDamage} / {compExp.StabilityDamage}");                        
+                        Mod.Log.Debug?.Write($"      weapon has component explosion: {compExp.ExplosionDamage} / {compExp.HeatDamage} / {compExp.StabilityDamage}");
                     }
                 }
                 else

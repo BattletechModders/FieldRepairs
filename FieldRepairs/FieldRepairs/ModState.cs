@@ -1,18 +1,21 @@
 ﻿
 using static FieldRepairs.ModConfig;
 
-namespace FieldRepairs {
+namespace FieldRepairs
+{
 
-    public static class ModState {
+    public static class ModState
+    {
 
         public static ThemeConfig CurrentTheme;
         public static bool SuppressShowActorSequences = false;
 
-        public static void Reset() {
+        public static void Reset()
+        {
             // Reinitialize state
 
             CurrentTheme = null;
-            SuppressShowActorSequences = false; 
+            SuppressShowActorSequences = false;
 
         }
 

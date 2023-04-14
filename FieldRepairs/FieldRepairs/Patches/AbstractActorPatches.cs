@@ -1,8 +1,7 @@
-﻿using BattleTech;
-using Harmony;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace FieldRepairs.Patches {
+namespace FieldRepairs.Patches
+{
     //[HarmonyPatch(typeof(AbstractActor), "CreateSpawnEffectByTag")]
     //public static class AbstractActor_CreateSpawnEffectByTag {
     //    public static void Prefix(AbstractActor __instance) {

@@ -1,13 +1,12 @@
-﻿using BattleTech;
-using CustomComponents;
-using MechEngineer.Features.ComponentExplosions;
-using MechEngineer.Features.CriticalEffects;
+﻿
 using System.Collections.Generic;
 using static FieldRepairs.ModConfig;
 
-namespace FieldRepairs {
+namespace FieldRepairs
+{
 
-    public class MechRepairState : RepairState {
+    public class MechRepairState : RepairState
+    {
         public readonly Mech Target;
 
         public readonly int ArmorHits;
@@ -160,18 +159,18 @@ namespace FieldRepairs {
                 {
                     Mod.Log.Debug?.Write($"  - Found gyro: {mc.Description.UIName}");
                     compSummary.GyroParts.Add(mc);
-                    if (mc.componentDef.Is<CriticalEffectsCustom>(out CriticalEffectsCustom meCritEffects) && 
+                    if (mc.componentDef.Is<CriticalEffectsCustom>(out CriticalEffectsCustom meCritEffects) &&
                         meCritEffects.MaxHits > compSummary.MaxGyroHits)
                     {
                         compSummary.MaxGyroHits = meCritEffects.MaxHits;
                         Mod.Log.Debug?.Write($"      gyro has maxhits: {compSummary.MaxGyroHits}");
                     }
                 }
-                else if (mc.componentDef.IsCategory(Mod.Config.CustomComponentCategories.EngineParts)) 
+                else if (mc.componentDef.IsCategory(Mod.Config.CustomComponentCategories.EngineParts))
                 {
                     Mod.Log.Debug?.Write($"  - Found engine: {mc.Description.UIName}");
                     compSummary.EngineParts.Add(mc);
-                    if (mc.componentDef.Is<MechCriticalEffectsCustom>(out MechCriticalEffectsCustom meCritEffects) && 
+                    if (mc.componentDef.Is<MechCriticalEffectsCustom>(out MechCriticalEffectsCustom meCritEffects) &&
                         meCritEffects.MaxHits > compSummary.MaxEngineHits)
                     {
                         compSummary.MaxEngineHits = meCritEffects.MaxHits;
@@ -195,7 +194,7 @@ namespace FieldRepairs {
                     // Check weapons for volatile? If we don't apply effects, do we care?                    
                     if (mc.componentDef.Is<ComponentExplosion>(out ComponentExplosion compExp))
                     {
-                        Mod.Log.Debug?.Write($"      weapon has component explosion: {compExp.ExplosionDamage} / {compExp.HeatDamage} / {compExp.StabilityDamage}");                        
+                        Mod.Log.Debug?.Write($"      weapon has component explosion: {compExp.ExplosionDamage} / {compExp.HeatDamage} / {compExp.StabilityDamage}");
                     }
                 }
                 else

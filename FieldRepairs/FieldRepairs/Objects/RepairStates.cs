@@ -1,15 +1,17 @@
-﻿using BattleTech;
-using static FieldRepairs.ModConfig;
+﻿using static FieldRepairs.ModConfig;
 
-namespace FieldRepairs {
+namespace FieldRepairs
+{
 
-    public abstract class RepairState {
+    public abstract class RepairState
+    {
 
         public int stateRolls = 2;
         public int effectRating = 0;
 
-        public RepairState(PoorlyMaintainedEffect effect, UnitRollCfg rollCfg) {
-            if (effect == null || effect.EffectData == null || 
+        public RepairState(PoorlyMaintainedEffect effect, UnitRollCfg rollCfg)
+        {
+            if (effect == null || effect.EffectData == null ||
                 effect.EffectData.poorlyMaintainedEffectData != null ||
                 rollCfg == null)
             {
@@ -30,7 +32,7 @@ namespace FieldRepairs {
                     effectRating = 75;
                     stateRolls = Mod.Random.Next(rollCfg.PM75_MinRolls, rollCfg.PM75_MaxRolls);
                     Mod.Log.Debug?.Write($"75% effect supplied, stateRolls = {stateRolls}");
-                } 
+                }
                 else
                 {
                     Mod.Log.Debug?.Write($"Unknown effect, stateRolls = {stateRolls}");
@@ -43,13 +45,15 @@ namespace FieldRepairs {
         }
     }
 
-    public class BuildingRepairState : RepairState {
+    public class BuildingRepairState : RepairState
+    {
         public readonly Building Target;
-        public BuildingRepairState(PoorlyMaintainedEffect effect, Building targetBuilding) : base(effect, null) {
+        public BuildingRepairState(PoorlyMaintainedEffect effect, Building targetBuilding) : base(effect, null)
+        {
             Target = targetBuilding;
 
             // Buildings only have structure
         }
     }
-   
+
 }
