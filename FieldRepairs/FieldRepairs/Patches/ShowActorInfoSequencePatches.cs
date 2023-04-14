@@ -13,8 +13,10 @@ namespace FieldRepairs.Patches
     [HarmonyPatch(new Type[] { typeof(ICombatant), typeof(Text), typeof(FloatieMessage.MessageNature), typeof(bool) })]
     static class ShowActorInfoSequencePatches_ctor
     {
-        static bool Prefix(ICombatant combatant, ref bool useCamera)
+        static void Prefix(ref bool __runOriginal, ICombatant combatant, ref bool useCamera)
         {
+            if (!__runOriginal) return;
+
             Mod.Log.Trace?.Write("SAIS:ctor - entered.");
 
             if (ModState.SuppressShowActorSequences)
@@ -22,8 +24,6 @@ namespace FieldRepairs.Patches
                 Mod.Log.Trace?.Write("Suppressing floaties by forcing camera to false.");
                 useCamera = false;
             }
-
-            return true;
         }
 
         static void Postfix()

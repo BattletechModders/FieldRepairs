@@ -3,8 +3,10 @@
     [HarmonyPatch(typeof(UnitSpawnPointGameLogic), "Spawn")]
     public static class UnitSpawnPointGameLogic_Spawn
     {
-        public static void Prefix(UnitSpawnPointGameLogic __instance, string ___teamDefinitionGuid)
+        public static void Prefix(ref bool __runOriginal, UnitSpawnPointGameLogic __instance, string ___teamDefinitionGuid)
         {
+            if (!__runOriginal) return;
+
             Mod.Log.Trace?.Write("USPGL:S - entered.");
             if (Mod.Config.Skirmish.Tag != null && !Mod.Config.Skirmish.Tag.Equals(""))
             {

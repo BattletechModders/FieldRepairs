@@ -20,27 +20,35 @@ namespace FieldRepairs.Patches
     [HarmonyPatch(typeof(PoorlyMaintainedEffect), "ApplyEffectsToBuilding")]
     public static class PoorlyMaintainedEffect_ApplyEffectsToBuilding
     {
-        static bool Prefix(PoorlyMaintainedEffect __instance, Building targetBuilding)
+        static void Prefix(ref bool __runOriginal, PoorlyMaintainedEffect __instance, Building targetBuilding)
         {
             Mod.Log.Trace?.Write("PME:AETB - entered.");
             //BuildingRepairState repairState = RepairsHelper.GetRepairState(__instance, targetBuilding);
 
             // Note that OnEffectBegin will invoke *every* ApplyEffects, and expects the ApplyEfect to check that the target isn't null. 
-            if (targetBuilding == null) { return false; }
+            if (targetBuilding == null)
+            {
+                __runOriginal = false;
+            }
 
-            return true;
         }
     }
 
     [HarmonyPatch(typeof(PoorlyMaintainedEffect), "ApplyEffectsToMech")]
     public static class PoorlyMaintainedEffect_ApplyEffectsToMech
     {
-        static bool Prefix(PoorlyMaintainedEffect __instance, Mech targetMech)
+        static void Prefix(ref bool __runOriginal, PoorlyMaintainedEffect __instance, Mech targetMech)
         {
+            if (!__runOriginal) return;
+
             Mod.Log.Trace?.Write("PME:AETM - entered.");
 
             // Note that OnEffectBegin will invoke *every* ApplyEffects, and expects the ApplyEfect to check that the target isn't null. 
-            if (targetMech == null) { return false; }
+            if (targetMech == null)
+            {
+                __runOriginal = false;
+                return;
+            }
 
             Mod.Log.Info?.Write($" Applying PoorlyMaintainedEffect to unit: {CombatantUtils.Label(targetMech)}");
             ModState.SuppressShowActorSequences = true;
@@ -189,19 +197,26 @@ namespace FieldRepairs.Patches
                 titleText.ToString(), descSB.ToString(), __instance.EffectData.Description.Icon);
 
             ModState.SuppressShowActorSequences = false;
-            return false;
+
+            __runOriginal = false;
         }
     }
 
     [HarmonyPatch(typeof(PoorlyMaintainedEffect), "ApplyEffectsToTurret")]
     public static class PoorlyMaintainedEffect_ApplyEffectsToTurret
     {
-        static bool Prefix(PoorlyMaintainedEffect __instance, Turret targetTurret)
+        static void Prefix(ref bool __runOriginal, PoorlyMaintainedEffect __instance, Turret targetTurret)
         {
+            if (!__runOriginal) return;
+
             Mod.Log.Trace?.Write("PME:AETT - entered.");
 
             // Note that OnEffectBegin will invoke *every* ApplyEffects, and expects the ApplyEfect to check that the target isn't null. 
-            if (targetTurret == null) { return false; }
+            if (targetTurret == null) 
+            {
+                __runOriginal = false;
+                return;
+            }
 
             Mod.Log.Info?.Write($" Applying PoorlyMaintainedEffect to unit: {CombatantUtils.Label(targetTurret)}");
             ModState.SuppressShowActorSequences = true;
@@ -331,19 +346,26 @@ namespace FieldRepairs.Patches
                 titleText.ToString(), descSB.ToString(), __instance.EffectData.Description.Icon);
 
             ModState.SuppressShowActorSequences = false;
-            return false;
+
+            __runOriginal = false;
         }
     }
 
     [HarmonyPatch(typeof(PoorlyMaintainedEffect), "ApplyEffectsToVehicle")]
     public static class PoorlyMaintainedEffect_ApplyEffectsToVehicle
     {
-        static bool Prefix(PoorlyMaintainedEffect __instance, Vehicle targetVehicle)
+        static void  Prefix(ref bool __runOriginal, PoorlyMaintainedEffect __instance, Vehicle targetVehicle)
         {
+            if (!__runOriginal) return;
+
             Mod.Log.Trace?.Write("PME:AETV - entered.");
 
             // Note that OnEffectBegin will invoke *every* ApplyEffects, and expects the ApplyEfect to check that the target isn't null. 
-            if (targetVehicle == null) { return false; }
+            if (targetVehicle == null) 
+            {
+                __runOriginal = false;
+                return;
+            }
 
             Mod.Log.Info?.Write($" Applying PoorlyMaintainedEffect to unit: {CombatantUtils.Label(targetVehicle)}");
             ModState.SuppressShowActorSequences = true;
@@ -484,7 +506,8 @@ namespace FieldRepairs.Patches
                 titleText.ToString(), descSB.ToString(), __instance.EffectData.Description.Icon);
 
             ModState.SuppressShowActorSequences = false;
-            return false;
+            
+            __runOriginal = false;
         }
     }
 
