@@ -26,14 +26,13 @@ namespace FieldRepairs.Patches
             }
         }
 
-        static void Postfix()
+        static void Postfix(ShowActorInfoSequence __instance)
         {
             if (ModState.SuppressShowActorSequences)
             {
                 Mod.Log.Trace?.Write("Suppressing floaties by forcing state to finished.");
-                Traverse stateT = new Traverse(typeof(ShowActorInfoSequence)).Property("state").SetValue(3);
+                __instance.state = ShowActorInfoSequence.SequenceState.Finished;
             }
-
         }
     }
 }
